@@ -1,0 +1,144 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: movies-postgres
+    expose:
+      - 5432
+    volumes:
+      - ./postgresql/data:/var/lib/postgresql/data
+      - ./postgresql/initdb:/docker-entrypoint-initdb.d
+    env_file:
+      - .env
+    networks: 
+      - movies-network
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: movies-pgadmin
+    ports:
+      - "5050:80"
+    volumes:
+      - ./pgadmin/data:/var/lib/pgadmin
+    env_file:
+      - .env
+    networks:
+      -  movies-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "wget", "-O", "-", "http://localhost:80/misc/ping"]
+      interval: 30s
+      timeout: 10s
+      start_period: 160s
+      retries: 3
+
+  kibana:
+    image: kibana:8.15.2
+    container_name: movies-kibana
+    ports:
+      - "5601:5601"
+    env_file:
+      - .env
+    networks:
+      - movies-network
+    depends_on:
+      - elasticsearch
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5601/app/kibana"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  logstash:
+    image: logstash:8.15.2
+    container_name: movies-logstash
+    ports:
+      - "5044:5044"
+    volumes:
+      - ./logstash/pipelines:/usr/share/logstash/pipeline
+    networks:
+      - movies-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9600/_node/stats"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  redis:
+    image: redis:7.4.0
+    container_name: movies-redis
+    expose:
+        - 6379
+    volumes:
+        - ./redis/data:/data/
+    command: redis-server --databases 2
+    networks:
+      -  movies-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nginx:
+    image: nginx:1.27.1
+    container_name: movies-nginx
+    ports:
+      - "8000:========="
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/configs:/etc/nginx/conf.d:ro
+      - ./nginx/logs:/var/log/nginx
+    networks:
+      -  movies-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  
+  filebeat:
+    image: elastic/filebeat:8.15.2
+    container_name: movies-filebeat
+    volumes:
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - ./nginx/logs:/var/log/nginx
+    restart: always
+    networks:
+      - movies-network
+    healthcheck:
+      test: ["CMD", "pidof", "filebeat"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: movies-kafka
+    expose:
+      - 9094
+    volumes:
+      - ./kafka/data:/bitnami/kafka/data
+    env_file:
+      - .env
+    networks:
+      - movies-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "kafka-topics.sh", "--bootstrap-server", "localhost:9094", "--list"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+networks:
+  movies-network:
+    name: movies-network

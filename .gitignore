@@ -1,0 +1,30 @@
+__pycache__/
+
+# local env files
+.env
+.env.local
+.env.*.local
+
+dbs/
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Vim files
+*~
+*.swp
+
+# venv
+.venv
+*.log
+
+.python-version
+
+.DS_Store
+
