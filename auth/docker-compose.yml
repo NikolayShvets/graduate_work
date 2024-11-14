@@ -1,0 +1,36 @@
+services:
+  auth:
+    container_name: movies-auth
+    build: src
+    ports:
+      - "8070:8001"
+    env_file:
+      - src/.env
+    command: bash -c "
+      alembic upgrade head &&
+      uvicorn app.main:app --host 0.0.0.0 --port 8001"
+    volumes:
+      - ./log:/var/log
+    restart: always
+    networks:
+      - movies-network
+
+  filebeat:
+    image: elastic/filebeat:8.15.2
+    container_name: movies-auth-filebeat
+    volumes:
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - ./log:/var/log
+    restart: always
+    networks:
+      - movies-network
+    healthcheck:
+      test: [ "CMD", "pidof", "filebeat" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  movies-network:
+    name: movies-network
+    external: true
