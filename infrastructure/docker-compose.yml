@@ -37,6 +37,47 @@ services:
       start_period: 160s
       retries: 3
 
+  logstash:
+    image: logstash:8.15.2
+    container_name: movies-logstash
+    ports:
+      - "5044:5044"
+    volumes:
+      - ./logstash/pipelines:/usr/share/logstash/pipeline
+    networks:
+      - movies-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9600/_node/stats"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  elasticsearch:
+    image: elasticsearch:8.15.2
+    container_name: movies-elasticsearch
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+    volumes:
+      - ./elasticsearch/data:/usr/share/elasticsearch/data
+    env_file:
+      - .env
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    networks:
+      - movies-network
+    restart: always
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9200/_cluster/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
   kibana:
     image: kibana:8.15.2
     container_name: movies-kibana
@@ -51,22 +92,6 @@ services:
     restart: always
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5601/app/kibana"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-
-  logstash:
-    image: logstash:8.15.2
-    container_name: movies-logstash
-    ports:
-      - "5044:5044"
-    volumes:
-      - ./logstash/pipelines:/usr/share/logstash/pipeline
-    networks:
-      - movies-network
-    restart: always
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9600/_node/stats"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -88,24 +113,6 @@ services:
       timeout: 5s
       retries: 5
 
-  nginx:
-    image: nginx:1.27.1
-    container_name: movies-nginx
-    ports:
-      - "8000:========="
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/configs:/etc/nginx/conf.d:ro
-      - ./nginx/logs:/var/log/nginx
-    networks:
-      -  movies-network
-    restart: always
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-  
   filebeat:
     image: elastic/filebeat:8.15.2
     container_name: movies-filebeat
@@ -135,6 +142,24 @@ services:
     restart: always
     healthcheck:
       test: ["CMD", "kafka-topics.sh", "--bootstrap-server", "localhost:9094", "--list"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  nginx:
+    image: nginx:1.27.1
+    container_name: movies-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/configs:/etc/nginx/conf.d:ro
+      - ./nginx/logs:/var/log/nginx
+    networks:
+      -  movies-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
       interval: 30s
       timeout: 10s
       retries: 5

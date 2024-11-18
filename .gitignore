@@ -28,3 +28,9 @@ dbs/
 .DS_Store
 *.log
 
+/infrastructure/elasticsearch/data
+/infrastructure/kafka/data
+/infrastructure/nginx/logs
+/infrastructure/pgadmin/data
+/infrastructure/postgresql/data
+/infrastructure/redis/data
