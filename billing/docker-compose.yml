@@ -1,0 +1,34 @@
+services:
+  billing:
+    container_name: movies-billing
+    build: .
+    expose: 
+      - 8002
+    env_file:
+      - .env
+    command: bash -c "
+      alembic upgrade head &&
+      uvicorn app.main:app --host 0.0.0.0 --port 8002"
+    networks:
+      - movies-network
+    restart: always
+
+  filebeat:
+    image: elastic/filebeat:8.15.2
+    container_name: movies-billing-filebeat
+    volumes:
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - ./log:/var/log
+    restart: always
+    networks:
+      - movies-network
+    healthcheck:
+      test: ["CMD", "pidof", "filebeat"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  movies-network:
+    name: movies-network
+    external: true
