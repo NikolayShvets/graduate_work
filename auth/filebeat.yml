@@ -1,0 +1,13 @@
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/*.log
+    json:
+    keys_under_root: true
+    add_error_key: true
+    tags: ["auth"]
+
+output.logstash:
+  enabled: true
+  hosts: ["movies-logstash:5044"]

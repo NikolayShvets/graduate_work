@@ -8,10 +8,12 @@ services:
       - .env
     command: bash -c "
       alembic upgrade head &&
-      uvicorn app.main:app --host 0.0.0.0 --port 8002"
+      uvicorn src.main:app --host 0.0.0.0 --port 8002"
+    volumes:
+      - ./log:/var/log
+    restart: always
     networks:
       - movies-network
-    restart: always
 
   filebeat:
     image: elastic/filebeat:8.15.2

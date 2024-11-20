@@ -1,0 +1,12 @@
+__pycache__/
+.env
+.ruff_cache
+.idea
+.vscode
+
+/elasticsearch/data
+/kafka/data
+/nginx/logs
+/pgadmin/data
+/postgresql/data
+/redis/data

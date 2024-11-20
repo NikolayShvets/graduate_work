@@ -1,0 +1,80 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: movies-postgres-local
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgresql/data:/var/lib/postgresql/data
+      - ./postgresql/initdb:/docker-entrypoint-initdb.d
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    restart: always
+    networks:
+      - movies-network
+  
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: movies-pgadmin-local
+    ports:
+      - "5050:80"
+    volumes:
+      - ./pgadmin/data:/var/lib/pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    restart: always
+    networks:
+      - movies-network
+
+  redis:
+    image: redis:7.4.0
+    container_name: movies-redis-local
+    ports:
+        - "6379:6379"
+    volumes:
+        - ./redis/data:/data/
+    command: redis-server --databases 2
+    restart: always
+    networks:
+      - movies-network
+
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: movies-kafka
+    ports:
+      - "9094:9094"
+    volumes:
+      - ./dbs/kafka/data:/bitnami/kafka/data
+    env_file:
+      - .env
+    networks:
+      - movies-network
+    restart: always
+    healthcheck:
+      test: [ "CMD", "kafka-topics.sh", "--bootstrap-server", "localhost:9094", "--list" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      - zookeeper
+
+  zookeeper:
+    image: zookeeper:3.8
+    container_name: notification-zookeeper
+    hostname: zookeeper
+    networks:
+      - movies-network
+    restart: always
+    healthcheck:
+      test: [ "CMD", "zkCli.sh", "-server", "localhost:2181", "ls", "/" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+networks:
+  movies-network:
+    name: movies-network
+
+
