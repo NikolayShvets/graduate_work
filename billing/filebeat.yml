@@ -6,8 +6,8 @@ filebeat.inputs:
     json:
     keys_under_root: true
     add_error_key: true
-    tags: ["movies-billing"]
+    tags: ["billing"]
 
 output.logstash:
   enabled: true
-  hosts: ["movies-logstash:5044"]
+  hosts: ["logstash:5044"]

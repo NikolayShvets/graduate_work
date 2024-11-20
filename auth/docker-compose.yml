@@ -1,14 +1,14 @@
 services:
   auth:
     container_name: movies-auth
-    build: src
+    build: .
     expose:
       - 8001
     env_file:
-      - src/.env
+      - .env
     command: bash -c "
       alembic upgrade head &&
-      uvicorn app.main:app --host 0.0.0.0 --port 8001"
+      uvicorn src.main:app --host 0.0.0.0 --port 8001"
     volumes:
       - ./log:/var/log
     restart: always

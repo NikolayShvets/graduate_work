@@ -1,20 +1,22 @@
 .PHONY: up down local lint migrations migrate superuser
 
 up:
-	docker compose up --build
+	docker compose up -d --build
 
 down:
-	docker compose down -v --remove-orphans
+	docker compose down -v
 
-lint:
-	ruff format .
-	ruff check . --fix --show-fixes
+check:
+	poetry run ruff check src --fix
+
+format:
+	poetry run ruff format src
 
 migrations:
-	cd src; alembic revision --autogenerate -m $(m)
+	poetry run alembic revision --autogenerate -m $(m)
 
 migrate:
-	cd src; alembic upgrade head
+	poetry run alembic upgrade head
 
 superuser:
 	python ./src/app/commands/createsuperuser.py
