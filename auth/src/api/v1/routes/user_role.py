@@ -1,15 +1,15 @@
 from fastapi import APIRouter, HTTPException, status
 
-from src.api.v1.deps.roles import ForAdminOnly
-from src.api.v1.deps.session import Session
-from src.api.v1.schemas.user_role import (
+from api.v1.deps.roles import ForAdminOnly
+from api.v1.deps.session import Session
+from api.v1.schemas.user_role import (
     UserRoleCreateSchema,
     UserRoleRetrieveSchema,
     UserRoleRevokeSchema,
 )
-from src.repository.role import role_repository
-from src.repository.user import user_repository
-from src.repository.user_role import user_role_repository
+from repository.role import role_repository
+from repository.user import user_repository
+from repository.user_role import user_role_repository
 
 router = APIRouter()
 

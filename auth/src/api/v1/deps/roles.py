@@ -3,10 +3,10 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import joinedload
 
-from src.api.v1.deps.fastapi_users import CurrentUser
-from src.api.v1.deps.session import Session
-from src.models import User
-from src.repository.user import user_repository
+from api.v1.deps.fastapi_users import CurrentUser
+from api.v1.deps.session import Session
+from models import User
+from repository.user import user_repository
 
 
 class RoleChecker:

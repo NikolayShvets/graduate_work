@@ -1,4 +1,4 @@
-from src.settings.base import Settings
+from settings.base import Settings
 
 
 class LoggingSettings(Settings):

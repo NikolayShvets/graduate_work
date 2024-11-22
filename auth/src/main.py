@@ -6,11 +6,11 @@ from fastapi.responses import ORJSONResponse
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from src.api import v1_router
-from src.db import postgresql, redis
-from src.settings.api import settings as api_settings
-from src.settings.postgresql import settings as postgresql_settings
-from src.settings.redis import settings as redis_settings
+from api import v1_router
+from db import postgresql, redis
+from settings.api import settings as api_settings
+from settings.postgresql import settings as postgresql_settings
+from settings.redis import settings as redis_settings
 
 
 @asynccontextmanager

@@ -15,8 +15,8 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.models.base import Base, mapper_registry
-from src.models.constance import (
+from models.base import Base, mapper_registry
+from models.constance import (
     NAME_STR_LEN,
     REFRESH_TOKEN_STR_LEN,
     USER_AGENT_STR_LEN,

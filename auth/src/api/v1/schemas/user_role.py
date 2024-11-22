@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from src.api.v1.schemas.base import Base
+from api.v1.schemas.base import Base
 
 
 class UserRoleBaseSchema(Base):

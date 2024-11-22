@@ -3,8 +3,8 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.models import Session
-from src.repository.base import SQLAlchemyRepository
+from models import Session
+from repository.base import SQLAlchemyRepository
 
 
 class SessionRepository(SQLAlchemyRepository[Session]):

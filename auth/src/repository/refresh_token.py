@@ -1,5 +1,5 @@
-from src.models import RefreshToken
-from src.repository.base import SQLAlchemyRepository
+from models import RefreshToken
+from repository.base import SQLAlchemyRepository
 
 
 class RefreshTokenRepository(SQLAlchemyRepository[RefreshToken]):
