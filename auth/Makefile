@@ -12,6 +12,9 @@ check:
 format:
 	poetry run ruff format src
 
+migration:
+	PYTHONPATH=src poetry run alembic revision -m $(m)
+
 migrations:
 	PYTHONPATH=src poetry run alembic revision --autogenerate -m $(m)
 
@@ -19,7 +22,7 @@ migrate:
 	PYTHONPATH=src poetry run alembic upgrade head
 
 superuser:
-	python ./src/app/commands/createsuperuser.py
+	PYTHONPATH=src python ./src/commands/createsuperuser.py
 
 tests:
 	docker compose -f test-docker-compose.yml up -d
