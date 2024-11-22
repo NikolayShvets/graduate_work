@@ -16,9 +16,9 @@ format:
 	poetry run ruff format src
 
 migrations:
-	poetry run alembic revision --autogenerate -m $(m)
+	PYTHONPATH=src poetry run alembic revision --autogenerate -m $(m)
 
 migrate:
-	poetry run alembic upgrade head
+	PYTHONPATH=src poetry run alembic upgrade head
 
 .DEFAULT_GOAL := up
