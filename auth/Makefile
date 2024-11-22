@@ -31,4 +31,8 @@ tests:
 	docker compose -f test-docker-compose.yml down -v --remove-orphans
 	docker ps -a | grep 'test-auth' | awk '{print $$1}' | xargs docker rm
 
+build:
+	docker --log-level=debug build --progress=plain --pull --file=Dockerfile --tag=ghcr.io/nikolayshvets/movies-auth:1.1 .
+	docker push ghcr.io/nikolayshvets/movies-auth:1.1
+
 .DEFAULT_GOAL := up
