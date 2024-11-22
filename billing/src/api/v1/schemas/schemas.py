@@ -21,3 +21,9 @@ class OutputNewPayment(Base):
     payment_method_id: str | None = Field(description="Id главного платежа",
                                           examples=["255350c9-000f-5000-a000-1f211b3ea0a7"])
     payment_method_saved: bool | None = Field(description="Состояние платежа", examples=[True, False])
+
+
+class InputRefund(Base):
+    payment_id: str = Field(description="ID платежа", examples=["255350c9-000f-5000-a000-1f211b3ea0a7"])
+    amount: float = Field(description="Стоимость", examples=[100.00, 500.00])
+    currency: str = Field(description="Валюта", examples=["RUB"])

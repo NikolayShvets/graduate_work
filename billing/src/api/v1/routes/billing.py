@@ -1,9 +1,10 @@
-from fastapi import HTTPException, APIRouter
-from yookassa import Payment
+from fastapi import APIRouter
+from yookassa import Payment, Refund
 from src.api.v1.schemas.schemas import (
     NewPayment as NewPaymentScheme,
     OutputNewPayment as OutputNewPaymentScheme,
     AutoPayment as AutoPaymentScheme,
+    InputRefund as InputRefundScheme,
 )
 from src.logger.logger import logger
 from yookassa.client import NotFoundError
@@ -90,15 +91,30 @@ async def checkout(payment_id: str):
         payment_method_id = payment.payment_method.id if hasattr(
             payment.payment_method, 'id'
         ) else None
-        cancellation_details = payment.cancellation_details.party if hasattr(payment.cancellation_details,
-                                                                             'party') else None
+        cancellation_details_party = payment.cancellation_details.party if hasattr(payment.cancellation_details,
+                                                                                   'party') else None
+        cancellation_details_reason = payment.cancellation_details.party if hasattr(payment.cancellation_details,
+                                                                                    'reason') else None
         return {
             'id': payment.id,
             'status': payment.status,
             'confirmation_url': confirmation_url,
             'payment_method_saved': payment_method_saved,
             'payment_method_id': payment_method_id,
-            'cancellation_details': cancellation_details,
+            'cancellation_details_party': cancellation_details_party,
+            'cancellation_details_reason': cancellation_details_reason,
         }
     except NotFoundError:
         return {'status': 404, 'detail': "Платеж не найден"}
+
+
+@router.post("/refund/{payment_id}")
+async def refund(data: InputRefundScheme):
+    refund = Refund.create({
+        "amount": {
+            "value": data.amount,
+            "currency": data.currency,
+        },
+        "payment_id": data.payment_id
+    })
+    return refund
