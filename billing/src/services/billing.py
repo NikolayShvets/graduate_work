@@ -1,39 +1,22 @@
-from abc import ABC, abstractmethod
-
 from fastapi import HTTPException
 from yookassa import Payment, Refund
+import logging
 
 from src.api.v1.schemas.schemas import (
-    NewPayment as NewPaymentScheme,
-    OutputNewPayment as OutputNewPaymentScheme,
-    AutoPayment as AutoPaymentScheme,
-    InputRefund as InputRefundScheme,
+    NewPaymentScheme,
+    OutputNewPaymentScheme,
+    AutoPaymentScheme,
+    InputRefundScheme,
 )
-from src.logger.logger import logger
+
 from yookassa.client import NotFoundError
 
 
-class BaseBilling(ABC):
-
-    @abstractmethod
-    def create_payment(self, data: NewPaymentScheme) -> OutputNewPaymentScheme:
-        ...
-
-    @abstractmethod
-    def create_auto_payment(self, data: AutoPaymentScheme) -> OutputNewPaymentScheme:
-        ...
-
-    @abstractmethod
-    def get_payment(self, payment_id: str) -> dict:
-        ...
-
-    @abstractmethod
-    def create_refund(self, data: InputRefundScheme) -> Refund:
-        ...
-
-
-class YooKassaBilling(BaseBilling):
+class YooKassaBilling:
     """Класс биллинга YooKassa"""
+
+    def __init__(self):
+        self.log = logging.getLogger("main")
 
     def create_payment(self, data: NewPaymentScheme) -> OutputNewPaymentScheme:
         """
@@ -69,7 +52,7 @@ class YooKassaBilling(BaseBilling):
             )
 
         except Exception as e:
-            logger.error(e)
+            self.log.error(e)
 
     def create_auto_payment(self, data: AutoPaymentScheme) -> OutputNewPaymentScheme:
         """
@@ -102,7 +85,7 @@ class YooKassaBilling(BaseBilling):
                 payment_method_saved=payment_method_saved,
             )
         except Exception as e:
-            logger.error(e)
+            self.log.error(e)
 
     def get_payment(self, payment_id: str) -> dict:
         """
