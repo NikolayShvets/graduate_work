@@ -14,8 +14,10 @@ from src.settings.yookassa import settings as yookassa_settings
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    Configuration.account_id = yookassa_settings.ACCOUNT_ID
-    Configuration.secret_key = yookassa_settings.KASSA_SECRET_KEY
+    Configuration.configure(
+        account_id=yookassa_settings.ACCOUNT_ID,
+        secret_key=yookassa_settings.KASSA_SECRET_KEY
+    )
     postgresql.async_engine = create_async_engine(
         postgresql_settings.DSN,
         echo=postgresql_settings.LOG_QUERIES,
