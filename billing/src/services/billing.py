@@ -93,29 +93,31 @@ class YooKassaBilling:
         """
         try:
             payment = Payment.find_one(payment_id)
-            confirmation_url = payment.confirmation.confirmation_url if hasattr(payment.confirmation,
-                                                                                'confirmation_url') else None
-            payment_method_saved = payment.payment_method.saved if hasattr(
-                payment.payment_method, 'saved'
-            ) else None
-            payment_method_id = payment.payment_method.id if hasattr(
-                payment.payment_method, 'id'
-            ) else None
-            cancellation_details_party = payment.cancellation_details.party if hasattr(payment.cancellation_details,
-                                                                                       'party') else None
-            cancellation_details_reason = payment.cancellation_details.party if hasattr(payment.cancellation_details,
-                                                                                        'reason') else None
-            return {
-                'id': payment.id,
-                'status': payment.status,
-                'confirmation_url': confirmation_url,
-                'payment_method_saved': payment_method_saved,
-                'payment_method_id': payment_method_id,
-                'cancellation_details_party': cancellation_details_party,
-                'cancellation_details_reason': cancellation_details_reason,
-            }
         except NotFoundError:
+            self.log.error('Item not found')
             raise HTTPException(status_code=404, detail="Item not found")
+
+        confirmation_url = payment.confirmation.confirmation_url if hasattr(payment.confirmation,
+                                                                            'confirmation_url') else None
+        payment_method_saved = payment.payment_method.saved if hasattr(
+            payment.payment_method, 'saved'
+        ) else None
+        payment_method_id = payment.payment_method.id if hasattr(
+            payment.payment_method, 'id'
+        ) else None
+        cancellation_details_party = payment.cancellation_details.party if hasattr(payment.cancellation_details,
+                                                                                   'party') else None
+        cancellation_details_reason = payment.cancellation_details.party if hasattr(payment.cancellation_details,
+                                                                                    'reason') else None
+        return {
+            'id': payment.id,
+            'status': payment.status,
+            'confirmation_url': confirmation_url,
+            'payment_method_saved': payment_method_saved,
+            'payment_method_id': payment_method_id,
+            'cancellation_details_party': cancellation_details_party,
+            'cancellation_details_reason': cancellation_details_reason,
+        }
 
     def create_refund(self, data: InputRefundScheme) -> Refund:
         """
