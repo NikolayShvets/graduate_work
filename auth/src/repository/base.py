@@ -3,7 +3,7 @@ from typing import Any, TypeVar
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.models.base import Base
+from models.base import Base
 
 T = TypeVar("T", bound=Base)
 

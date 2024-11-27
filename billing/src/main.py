@@ -5,11 +5,11 @@ from fastapi.responses import ORJSONResponse
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from yookassa import Configuration
 
-from src.api import v1_router
-from src.db import postgresql
-from src.settings.api import settings as api_settings
-from src.settings.postgresql import settings as postgresql_settings
-from src.settings.yookassa import settings as yookassa_settings
+from api import v1_router
+from db import postgresql
+from settings.api import settings as api_settings
+from settings.postgresql import settings as postgresql_settings
+from settings.yookassa import settings as yookassa_settings
 
 
 @asynccontextmanager

@@ -1,7 +1,7 @@
 import logging
 import os
 
-from src.settings.logger import settings as logging_settings
+from settings.logger import settings as logging_settings
 
 os.makedirs(os.path.dirname(logging_settings.LOG_FILE_PATH), exist_ok=True)
 

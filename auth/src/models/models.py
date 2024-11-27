@@ -11,12 +11,13 @@ from sqlalchemy import (
     ForeignKey,
     String,
     Table,
+    func,
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.models.base import Base, mapper_registry
-from src.models.constance import (
+from models.base import Base, mapper_registry
+from models.constance import (
     NAME_STR_LEN,
     REFRESH_TOKEN_STR_LEN,
     USER_AGENT_STR_LEN,
@@ -72,9 +73,11 @@ class RefreshToken(Base):
 
 
 class Session(Base):
-    __table_args__ = {
-        "postgresql_partition_by": "RANGE (created_at)",
-    }
+    __table_args__ = ({"postgresql_partition_by": "RANGE (created_at)"},)
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=False), server_default=func.now(), primary_key=True
+    )
 
     user_id: Mapped[PY_UUID] = mapped_column(ForeignKey("user.id"))
     refresh_token_id: Mapped[PY_UUID] = mapped_column(ForeignKey("refreshtoken.id"))

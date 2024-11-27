@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from src.services.billing import YooKassaBilling
+from services.billing import YooKassaBilling
 
 
 def get_billing_service() -> YooKassaBilling:

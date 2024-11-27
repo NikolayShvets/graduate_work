@@ -1,6 +1,6 @@
 from pydantic import SecretStr
 
-from src.settings.base import Settings
+from settings.base import Settings
 
 
 class YooKassaSettings(Settings):

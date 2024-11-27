@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from yookassa import Payment, Refund
 from yookassa.client import NotFoundError
 
-from src.api.v1.schemas.schemas import (
+from api.v1.schemas.schemas import (
     AutoPaymentScheme,
     InputRefundScheme,
     NewPaymentScheme,

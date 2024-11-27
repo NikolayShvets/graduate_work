@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 import pytest
 
-from src.repository.role import role_repository
+from repository.role import role_repository
 
 
 @pytest.mark.anyio

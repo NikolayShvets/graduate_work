@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Response, status
 from fastapi_users.router.common import ErrorCode
 
-from src.api.v1.deps.fastapi_users import (
+from api.v1.deps.fastapi_users import (
     AccessStrategy,
     CurrentUser,
     CurrentUserByRefreshToken,
@@ -13,9 +13,9 @@ from src.api.v1.deps.fastapi_users import (
     authentication_backend,
     fastapi_users,
 )
-from src.api.v1.deps.user_agent import UserAgent
-from src.api.v1.schemas.user import UserCreateSchema, UserRetrieveSchema
-from src.users.schemas import BearerResponseSchema, RefreshResponseSchema
+from api.v1.deps.user_agent import UserAgent
+from api.v1.schemas.user import UserCreateSchema, UserRetrieveSchema
+from users.schemas import BearerResponseSchema, RefreshResponseSchema
 
 router = APIRouter()
 

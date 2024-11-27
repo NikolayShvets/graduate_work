@@ -11,17 +11,17 @@ from fastapi_users.router.oauth import (
 from httpx_oauth.integrations.fastapi import OAuth2AuthorizeCallback
 from httpx_oauth.oauth2 import OAuth2Token
 
-from src.api.v1.deps.fastapi_users import (
+from api.v1.deps.fastapi_users import (
     AccessStrategy,
     RefreshStrategy,
     UserManager,
     authentication_backend,
 )
-from src.api.v1.deps.google_oauth import google_oauth2_client
-from src.api.v1.deps.session import Session
-from src.api.v1.deps.user_agent import UserAgent
-from src.api.v1.schemas.google_oauth import OAuth2AuthorizeResponse
-from src.settings.api import settings as api_settings
+from api.v1.deps.google_oauth import google_oauth2_client
+from api.v1.deps.session import Session
+from api.v1.deps.user_agent import UserAgent
+from api.v1.schemas.google_oauth import OAuth2AuthorizeResponse
+from settings.api import settings as api_settings
 
 router = APIRouter()
 callback_route_name = "oauth.callback"

@@ -1,44 +1,58 @@
 services:
   postgres:
     image: postgres:16
-    container_name: movies-postgres-local
+    container_name: movies-postgres
     ports:
       - "5432:5432"
     volumes:
       - ./postgresql/data:/var/lib/postgresql/data
       - ./postgresql/initdb:/docker-entrypoint-initdb.d
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    restart: always
-    networks:
+    env_file:
+      - .env
+    networks: 
       - movies-network
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   
   pgadmin:
     image: dpage/pgadmin4
-    container_name: movies-pgadmin-local
+    container_name: movies-pgadmin
     ports:
       - "5050:80"
     volumes:
       - ./pgadmin/data:/var/lib/pgadmin
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
-      - PGADMIN_DEFAULT_PASSWORD=admin
-    restart: always
+    env_file:
+      - .env
     networks:
-      - movies-network
+      -  movies-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "wget", "-O", "-", "http://localhost:80/misc/ping"]
+      interval: 30s
+      timeout: 10s
+      start_period: 160s
+      retries: 3
 
   redis:
     image: redis:7.4.0
-    container_name: movies-redis-local
+    container_name: movies-redis
     ports:
         - "6379:6379"
     volumes:
         - ./redis/data:/data/
     command: redis-server --databases 2
-    restart: always
     networks:
-      - movies-network
+      -  movies-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   kafka:
     image: bitnami/kafka:latest
@@ -46,29 +60,14 @@ services:
     ports:
       - "9094:9094"
     volumes:
-      - ./dbs/kafka/data:/bitnami/kafka/data
+      - ./kafka/data:/bitnami/kafka/data
     env_file:
       - .env
     networks:
       - movies-network
     restart: always
     healthcheck:
-      test: [ "CMD", "kafka-topics.sh", "--bootstrap-server", "localhost:9094", "--list" ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-    depends_on:
-      - zookeeper
-
-  zookeeper:
-    image: zookeeper:3.8
-    container_name: notification-zookeeper
-    hostname: zookeeper
-    networks:
-      - movies-network
-    restart: always
-    healthcheck:
-      test: [ "CMD", "zkCli.sh", "-server", "localhost:2181", "ls", "/" ]
+      test: ["CMD", "kafka-topics.sh", "--bootstrap-server", "localhost:9094", "--list"]
       interval: 30s
       timeout: 10s
       retries: 5

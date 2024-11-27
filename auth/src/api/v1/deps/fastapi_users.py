@@ -7,15 +7,15 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_users import FastAPIUsers, exceptions
 from fastapi_users.db import SQLAlchemyUserDatabase
 
-from src.api.v1.deps.session import Session
-from src.models import OAuthAccount, User
-from src.settings.api import settings as api_settings
-from src.settings.jwt import settings as jwt_settings
-from src.users.backend import RefreshableAuthenticationBackend
-from src.users.manager import UserManager as _UserManager
-from src.users.schemas import RefreshTokenSchema
-from src.users.strategy import AccessJWTStrategy, RefreshJWTStrategy
-from src.users.transport import RefreshableBearerTransport
+from api.v1.deps.session import Session
+from models import OAuthAccount, User
+from settings.api import settings as api_settings
+from settings.jwt import settings as jwt_settings
+from users.backend import RefreshableAuthenticationBackend
+from users.manager import UserManager as _UserManager
+from users.schemas import RefreshTokenSchema
+from users.strategy import AccessJWTStrategy, RefreshJWTStrategy
+from users.transport import RefreshableBearerTransport
 
 
 async def get_user_db(

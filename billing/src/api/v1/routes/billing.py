@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 from yookassa import Refund
 
-from src.api.v1.deps.billing import Billing
-from src.api.v1.schemas.schemas import (
+from api.v1.deps.billing import Billing
+from api.v1.schemas.schemas import (
     AutoPaymentScheme,
     InputRefundScheme,
     NewPaymentScheme,

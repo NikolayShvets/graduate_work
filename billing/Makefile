@@ -16,9 +16,13 @@ format:
 	poetry run ruff format src
 
 migrations:
-	poetry run alembic revision --autogenerate -m $(m)
+	PYTHONPATH=src poetry run alembic revision --autogenerate -m $(m)
 
 migrate:
-	poetry run alembic upgrade head
+	PYTHONPATH=src poetry run alembic upgrade head
+
+build:
+	docker --log-level=debug build --progress=plain --pull --file=Dockerfile --tag=ghcr.io/nikolayshvets/movies-billing:1.1 .
+	docker push ghcr.io/nikolayshvets/movies-billing:1.1
 
 .DEFAULT_GOAL := up

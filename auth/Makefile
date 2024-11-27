@@ -12,14 +12,17 @@ check:
 format:
 	poetry run ruff format src
 
+migration:
+	PYTHONPATH=src poetry run alembic revision -m $(m)
+
 migrations:
-	poetry run alembic revision --autogenerate -m $(m)
+	PYTHONPATH=src poetry run alembic revision --autogenerate -m $(m)
 
 migrate:
-	poetry run alembic upgrade head
+	PYTHONPATH=src poetry run alembic upgrade head
 
 superuser:
-	python ./src/app/commands/createsuperuser.py
+	PYTHONPATH=src python ./src/commands/createsuperuser.py
 
 tests:
 	docker compose -f test-docker-compose.yml up -d
@@ -27,5 +30,9 @@ tests:
 	docker run --network test-auth --env-file ./src/.test.env test-auth:latest
 	docker compose -f test-docker-compose.yml down -v --remove-orphans
 	docker ps -a | grep 'test-auth' | awk '{print $$1}' | xargs docker rm
+
+build:
+	docker --log-level=debug build --progress=plain --pull --file=Dockerfile --tag=ghcr.io/nikolayshvets/movies-auth:1.1 .
+	docker push ghcr.io/nikolayshvets/movies-auth:1.1
 
 .DEFAULT_GOAL := up
