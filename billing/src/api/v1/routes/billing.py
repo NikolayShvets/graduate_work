@@ -1,24 +1,28 @@
 from fastapi import APIRouter
 from yookassa import Refund
-from src.api.v1.schemas.schemas import (
-    NewPaymentScheme,
-    OutputNewPaymentScheme,
-    AutoPaymentScheme,
-    InputRefundScheme,
-)
 
 from src.api.v1.deps.billing import Billing
+from src.api.v1.schemas.schemas import (
+    AutoPaymentScheme,
+    InputRefundScheme,
+    NewPaymentScheme,
+    OutputNewPaymentScheme,
+)
 
 router = APIRouter()
 
 
 @router.post("/create_payment", response_model=OutputNewPaymentScheme)
-async def create_payment(data: NewPaymentScheme, billing: Billing) -> OutputNewPaymentScheme:
+async def create_payment(
+    data: NewPaymentScheme, billing: Billing
+) -> OutputNewPaymentScheme:
     return billing.create_payment(data=data)
 
 
 @router.post("/auto_payment", response_model=OutputNewPaymentScheme)
-async def auto_payment(data: AutoPaymentScheme, billing: Billing) -> OutputNewPaymentScheme:
+async def auto_payment(
+    data: AutoPaymentScheme, billing: Billing
+) -> OutputNewPaymentScheme:
     return billing.create_auto_payment(data=data)
 
 
