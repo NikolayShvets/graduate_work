@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-from yookassa import Refund
 
 from api.v1.deps.billing import Billing
 from api.v1.schemas.schemas import (
@@ -32,5 +31,5 @@ async def checkout(payment_id: str, billing: Billing) -> dict:
 
 
 @router.post("/refund/{payment_id}")
-async def refund(data: InputRefundScheme, billing: Billing) -> Refund:
+async def refund(data: InputRefundScheme, billing: Billing):
     return billing.create_refund(data=data)

@@ -9,11 +9,12 @@ from api.v1.schemas.base import Base
 class StatusEnum(StrEnum):
     pending = auto()
     closed = auto()
+    succeeded = auto()
 
 
 class CurrencyEnum(StrEnum):
-    RUB = auto()
-    ENG = auto()
+    RUB = "RUB"
+    ENG = "ENG"
 
 
 class NewPaymentScheme(Base):
@@ -32,11 +33,11 @@ class AutoPaymentScheme(NewPaymentScheme):
 
 
 class OutputNewPaymentScheme(Base):
-    id: str = Field(
+    id: UUID = Field(
         description="ID платежа", examples=["255350c9-000f-5000-a000-1f211b3ea0a7"]
     )
     status: StatusEnum = Field(description="Статус", examples=[StatusEnum.pending])
-    confirmation_url: str = Field(
+    confirmation_url: str | None = Field(
         description="Url для ввода данных карты",
         examples=[
             "https://yoomoney.ru/checkout/payments/v2/contract?orderId=2ed2dbcb-000f-5000"
