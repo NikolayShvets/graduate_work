@@ -14,7 +14,7 @@ class KafkaConsumer:
     async def consume(self) -> AsyncGenerator[Notification, None]:
         async for record in self._conn:
             if hasattr(self, f"_handle_{record.topic}"):
-                yield await getattr(self, f"handle_{record.topic}")(record.value)
+                yield await getattr(self, f"_handle_{record.topic}")(record.value)
             else:
                 logger.warning("There is no handler for topic %s", record.topic)
 

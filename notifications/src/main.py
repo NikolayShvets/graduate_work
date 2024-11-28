@@ -29,7 +29,13 @@ async def run_notification_process(
 
         message: Message = await builder.build(notification)
 
-        await sender.send(message)
+        # TODO: Подумать над обработкой исключений
+        try:
+            await sender.send(message)
+        except Exception:
+            continue
+
+        await consumer._conn.commit()
 
         await processed_notifications_repository.create(
             session, {"notification_id": notification.id}
@@ -41,6 +47,7 @@ async def main() -> None:
         *kafka_settings.KAFKA_TOPICS,
         bootstrap_servers=kafka_settings.KAFKA_BOOTSTRAP_SERVERS,
         group_id=kafka_settings.KAFKA_GROUP_ID,
+        enable_auto_commit=False,
     )
 
     smtp_client = SMTP(
@@ -62,11 +69,10 @@ async def main() -> None:
 
     async with (
         kafka_consumer_client as kafka_conn,
-        smtp_client as smtp_conn,
         postgresql.get_async_session() as session,
     ):
         consumer = KafkaConsumer(kafka_conn)
-        sender = EmailSender(smtp_conn)
+        sender = EmailSender(smtp_client)
         builder = FromHTMLTemplateBuilder(session)
 
         await run_notification_process(consumer, sender, builder, session)

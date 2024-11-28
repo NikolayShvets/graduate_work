@@ -19,8 +19,9 @@ class EmailSender:
         self._conn = conn
 
     @retry(
-        stop=stop_after_attempt(3),
-        wait=wait_random_exponential(min=1, max=10),
+        reraise=True,
+        stop=stop_after_attempt(10),
+        wait=wait_random_exponential(min=1, max=5),
         retry=retry_if_exception_type(
             (SMTPServerDisconnected, SMTPConnectError, SMTPTimeoutError)
         ),
@@ -31,11 +32,12 @@ class EmailSender:
         ),
     )
     async def send(self, message: Message) -> None:
-        await self._conn.sendmail(
-            smtp_settings.SMTP_USER,
-            [recipient.email for recipient in message.recipients],
-            self._prepare_message(message),
-        )
+        async with self._conn as conn:
+            await conn.sendmail(
+                smtp_settings.SMTP_USER,
+                [recipient.email for recipient in message.recipients],
+                self._prepare_message(message),
+            )
 
     def _prepare_message(self, message: Message) -> str:
         prepared = MIMEText(message.body, message.mime_type, "utf-8")
