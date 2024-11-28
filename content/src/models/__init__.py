@@ -1,12 +1,5 @@
 from models.base import Base
-from models.models import (
-    Person,
-    Genre,
-    FilmWork,
-    GenreFilmWork,
-    PersonFilmWork
-)
-
+from models.models import FilmWork, Genre, GenreFilmWork, Person, PersonFilmWork
 
 __all__ = [
     "Base",

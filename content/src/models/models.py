@@ -1,19 +1,25 @@
 from datetime import date
 
 from sqlalchemy import (
+    CheckConstraint,
     Column,
+    Date,
     DateTime,
+    Enum,
+    Float,
     ForeignKey,
     String,
     Table,
-    Enum, Text, text, Float, CheckConstraint, Date, func, UniqueConstraint
+    Text,
+    UniqueConstraint,
+    func,
+    text,
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import Base, mapper_registry
-from models.constance import VideoType, Role
-
+from models.constance import Role, VideoType
 
 genre_film_work = Table(
     "genrefilmwork",

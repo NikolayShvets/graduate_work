@@ -1,23 +1,21 @@
 import asyncio
 import datetime
 import logging
-from random import randint, choice
+from random import choice, randint
 
-import asyncpg
 import sqlalchemy
 from faker import Faker
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from settings.postgresql import settings
-from settings.logger import settings as log_settings
 from db import postgresql
-from repository.genre import genre_repository
-from repository.person import person_repository
+from models.constance import Role, VideoType
 from repository.film import film_repository
+from repository.genre import genre_repository
 from repository.genre_film_work import genre_fw_repository
+from repository.person import person_repository
 from repository.person_film_work import person_fw_repository
-from models.constance import VideoType, Role
-
+from settings.logger import settings as log_settings
+from settings.postgresql import settings
 
 logger = logging.getLogger(log_settings.LOG_NAME)
 faker = Faker()
@@ -70,7 +68,7 @@ async def fill_films():
 
 
 async def fill_genre_film_work(genre_id_list, film_id_list):
-    genre_fw_id_list = zip(genre_id_list, film_id_list)
+    genre_fw_id_list = zip(genre_id_list, film_id_list, strict=False)
 
     async with postgresql.async_session() as session:
         for id_ in genre_fw_id_list:
@@ -82,7 +80,7 @@ async def fill_genre_film_work(genre_id_list, film_id_list):
 
 
 async def fill_person_film_work(person_id_list, film_id_list):
-    person_fw_id_list = zip(person_id_list, film_id_list)
+    person_fw_id_list = zip(person_id_list, film_id_list, strict=False)
 
     async with postgresql.async_session() as session:
         for id_ in person_fw_id_list:

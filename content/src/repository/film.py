@@ -1,8 +1,14 @@
 from sqlalchemy import select
-from sqlalchemy.orm import aliased
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import aliased
 
-from models.models import FilmWork, Person, Genre, PersonFilmWork, GenreFilmWork, person_film_work
+from models.models import (
+    FilmWork,
+    Genre,
+    GenreFilmWork,
+    Person,
+    PersonFilmWork,
+)
 from repository.base import SQLAlchemyRepository
 
 

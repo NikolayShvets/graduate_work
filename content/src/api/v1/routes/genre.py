@@ -3,10 +3,9 @@ from uuid import UUID
 from fastapi import APIRouter, HTTPException, status
 
 from api.v1.deps.session import Session
-from repository.genre import genre_repository
-from api.v1.schemas.genre import GenreResponseSchema
 from api.v1.deps.user import UserData
-
+from api.v1.schemas.genre import GenreResponseSchema
+from repository.genre import genre_repository
 
 router = APIRouter()
 

@@ -8,9 +8,8 @@ from sqlalchemy.orm import (
     Mapped,
     declared_attr,
     mapped_column,
-    registry
+    registry,
 )
-
 
 mapper_registry = registry()
 
