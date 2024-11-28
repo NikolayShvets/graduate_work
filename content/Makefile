@@ -21,4 +21,8 @@ migrations:
 migrate:
 	poetry run alembic upgrade head
 
+filldb:
+	python ./src/commands/fill_database.py
+
+
 .DEFAULT_GOAL := up

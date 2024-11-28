@@ -2,26 +2,23 @@ from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, status, Query
 
-from src.api.v1.deps.session import Session
-from src.api.v1.deps.user import UserData
-from src.api.v1.schemas.person import PersonResponseSchema
-from src.repository.person import person_repository
+from api.v1.deps.session import Session
+from api.v1.deps.user import UserData
+from api.v1.schemas.person import PersonResponseSchema
+from repository.person import person_repository
 
 router = APIRouter()
 
 
 @router.get("/search/")
 async def search(
+        name: str | None,
         session: Session,
-        user: UserData,
-        name: str | None = Query(
-            None, title="Имя для поиска",
-            description="Имя персоны для полнотекстового поиска."
-        )
+        user: UserData
 ) -> list[PersonResponseSchema]:
     """
     Поиск персоны по имени.
-    Возвращает пагинированный список персон по заданному имени.
+    Возвращает список персон по заданному имени.
     """
     obj = await person_repository.search(session, name)
 
@@ -35,7 +32,7 @@ async def search(
     return persons
 
 
-@router.get("/{person_id}")
+@router.get("/{person_id}/")
 async def details(
         session: Session,
         person_id: UUID,

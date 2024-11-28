@@ -11,8 +11,8 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.models.base import Base, mapper_registry
-from src.models.constance import VideoType, Role
+from models.base import Base, mapper_registry
+from models.constance import VideoType, Role
 
 
 genre_film_work = Table(

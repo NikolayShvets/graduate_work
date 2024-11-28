@@ -2,8 +2,8 @@ from sqlalchemy import select
 from sqlalchemy.orm import aliased
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.models.models import FilmWork, Person, Genre, PersonFilmWork, GenreFilmWork, person_film_work
-from src.repository.base import SQLAlchemyRepository
+from models.models import FilmWork, Person, Genre, PersonFilmWork, GenreFilmWork, person_film_work
+from repository.base import SQLAlchemyRepository
 
 
 class FilmRepository(SQLAlchemyRepository[FilmWork]):

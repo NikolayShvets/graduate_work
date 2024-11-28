@@ -1,5 +1,5 @@
-from src.models.models import GenreFilmWork
-from src.repository.base import SQLAlchemyRepository
+from models.models import GenreFilmWork
+from repository.base import SQLAlchemyRepository
 
 
 class GenreFilmWorkRepository(SQLAlchemyRepository[GenreFilmWork]):

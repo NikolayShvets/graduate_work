@@ -1,5 +1,5 @@
-from src.models.models import Genre
-from src.repository.base import SQLAlchemyRepository
+from models.models import Genre
+from repository.base import SQLAlchemyRepository
 
 
 class GenreRepository(SQLAlchemyRepository[Genre]):

@@ -1,5 +1,5 @@
-from src.models.base import Base
-from src.models.models import (
+from models.base import Base
+from models.models import (
     Person,
     Genre,
     FilmWork,

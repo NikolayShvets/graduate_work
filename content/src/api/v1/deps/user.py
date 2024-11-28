@@ -5,9 +5,9 @@ from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
 from fastapi.security import OAuth2PasswordBearer
 
-from src.clients.auth.client import auth_client
-from src.clients.auth.schemas import UserRetrieveSchema
-from src.settings.jwt import settings
+from clients.auth.client import auth_client
+from clients.auth.schemas import UserRetrieveSchema
+from settings.jwt import settings
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 

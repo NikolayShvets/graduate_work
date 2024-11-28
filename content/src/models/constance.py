@@ -1,20 +1,12 @@
-from enum import Enum
+from enum import StrEnum
 
 
-NAME_STR_LEN = 128
-EMAIL_STR_LEN = 128
-PASSWORD_STR_LEN = 128
-SALT_STR_LEN = 32
-USER_AGENT_STR_LEN = 256
-REFRESH_TOKEN_STR_LEN = 512
-
-
-class VideoType(Enum):
+class VideoType(StrEnum):
     MOVIE = "movie"
     TV_SHOW = "tv_show"
 
 
-class Role(Enum):
+class Role(StrEnum):
     ACTOR = "actor"
     DIRECTOR = "director"
     WRITER = "writer"

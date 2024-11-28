@@ -1,6 +1,6 @@
-from src.clients.auth.schemas import UserRetrieveSchema
-from src.clients.base.client import BaseClient
-from src.settings.jwt import settings
+from clients.auth.schemas import UserRetrieveSchema
+from clients.base.client import BaseClient
+from settings.jwt import settings
 
 
 class AuthClient(BaseClient):
@@ -11,4 +11,4 @@ class AuthClient(BaseClient):
         return UserRetrieveSchema.model_validate(user)
 
 
-auth_client = AuthClient(base_url=f"{settings.AUTH_API_URL}/auth/jwt")
+auth_client = AuthClient(base_url=f"{settings.AUTH_API_URL}/v1/jwt")

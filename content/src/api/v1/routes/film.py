@@ -3,25 +3,25 @@ from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, status, Query
 
-from src.api.v1.deps.session import Session
-from src.api.v1.deps.user import UserData
-from src.api.v1.schemas.film import FilmResponseSchema
-from src.repository.film import film_repository
-from src.services.data_transfer import DataTransform
+from api.v1.deps.session import Session
+from api.v1.deps.user import UserData
+from api.v1.schemas.film import FilmResponseSchema
+from repository.film import film_repository
+from services.data_transfer import DataTransform
 
 
 router = APIRouter()
 data_transformer = DataTransform()
 
 
-@router.get("/{film_id}")
+@router.get("/{film_id}/")
 async def retrieve(
         film_id: UUID,
         session: Session,
         user: UserData,
 ) -> FilmResponseSchema:
     """
-    Получить полную информацию о фильме по его идентификатору.
+    Получение полной информации о фильме по его идентификатору.
     - **film_id**: Уникальный идентификатор фильма (обязательный параметр пути).
     Возвращает полную информацию о фильме в случае успеха,
     """
@@ -48,7 +48,7 @@ async def retrieve_all(
         genre: str | None = Query(None, description="Фильтрует фильмы по жанру.")
 ) -> list[FilmResponseSchema]:
     """
-    Получить список фильмов с возможностью фильтрации и сортировки.
+    Получение списка фильмов с возможностью фильтрации и сортировки.
     Возвращает список фильмов.
     - **sort**: Сортировка
     - **genre**: Жанр
@@ -73,8 +73,8 @@ async def search(
         user: UserData
 ) -> list[FilmResponseSchema]:
     """
+    Поиск фильма по названию.
     Возвращает список фильмов по заданному названию.
-    - **title**: Заголовок фильма для поиска
     """
     obj = await film_repository.search(session, title)
 

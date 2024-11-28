@@ -9,8 +9,8 @@ from tenacity import (
     wait_random_exponential,
 )
 
-from .constants import CONNECTION_TIMEOUT, MAX_RETRIES
-from .exceptions import (
+from clients.base.constants import CONNECTION_TIMEOUT, MAX_RETRIES
+from clients.base.exceptions import (
     BadRequestError,
     NotFoundError,
     ResponseDecodeError,

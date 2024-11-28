@@ -6,7 +6,7 @@ filebeat.inputs:
     json:
     keys_under_root: true
     add_error_key: true
-    tags: ["auth"]
+    tags: ["content"]
 
 output.logstash:
   enabled: true

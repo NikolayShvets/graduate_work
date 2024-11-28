@@ -1,5 +1,5 @@
-from src.models.models import PersonFilmWork
-from src.repository.base import SQLAlchemyRepository
+from models.models import PersonFilmWork
+from repository.base import SQLAlchemyRepository
 
 
 class PersonFilmWorkRepository(SQLAlchemyRepository[PersonFilmWork]):

@@ -9,7 +9,7 @@ ENV PYTHONFAULTHANDLER=1 \
     POETRY_VIRTUALENVS_CREATE=false \
     POETRY_CACHE_DIR='/var/cache/pypoetry' \
     POETRY_HOME='/usr/local' \
-    PYTHONPATH='/app'
+    PYTHONPATH='/app/src'
 
 WORKDIR /app
 

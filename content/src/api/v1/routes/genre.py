@@ -2,16 +2,16 @@ from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, status
 
-from src.api.v1.deps.session import Session
-from src.repository.genre import genre_repository
-from src.api.v1.schemas.genre import GenreResponseSchema
-from src.api.v1.deps.user import UserData
+from api.v1.deps.session import Session
+from repository.genre import genre_repository
+from api.v1.schemas.genre import GenreResponseSchema
+from api.v1.deps.user import UserData
 
 
 router = APIRouter()
 
 
-@router.get("/{genre_id}")
+@router.get("/{genre_id}/")
 async def retrieve(
         session: Session,
         genre_id: UUID,
@@ -20,7 +20,7 @@ async def retrieve(
     """
     Получение информации о жанре по его идентификатору.
     - **genre_id**: Уникальный идентификатор жанра (обязательный параметр пути).
-    Возвращает полную информацию о жанре в случае успеха,
+    Возвращает полную информацию о жанре.
     """
 
     genre = await genre_repository.get(session, id=genre_id)

@@ -1,19 +1,25 @@
 import asyncio
 import datetime
+import logging
 from random import randint, choice
 
+import asyncpg
+import sqlalchemy
 from faker import Faker
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
-from src.settings.postgresql import settings
-from src.db import postgresql
-from src.repository.genre import genre_repository
-from src.repository.person import person_repository
-from src.repository.film import film_repository
-from src.repository.genre_film_work import genre_fw_repository
-from src.repository.person_film_work import person_fw_repository
-from src.models.constance import VideoType, Role
+from settings.postgresql import settings
+from settings.logger import settings as log_settings
+from db import postgresql
+from repository.genre import genre_repository
+from repository.person import person_repository
+from repository.film import film_repository
+from repository.genre_film_work import genre_fw_repository
+from repository.person_film_work import person_fw_repository
+from models.constance import VideoType, Role
 
+
+logger = logging.getLogger(log_settings.LOG_NAME)
 faker = Faker()
 GENRES = ['Комедия', 'Фантастика', 'Ужасы', 'Боевик', 'Мелодрама', 'Мистика', 'Детектив']
 
@@ -89,12 +95,18 @@ async def fill_person_film_work(person_id_list, film_id_list):
 
 
 async def main():
-    genre_id_list = await fill_genres()
-    person_id_list = await fill_persons()
-    film_id_list = await fill_films()
+    try:
+        logger.info('Filling Postgres database with test data')
+        genre_id_list = await fill_genres()
+        person_id_list = await fill_persons()
+        film_id_list = await fill_films()
 
-    await fill_genre_film_work(genre_id_list, film_id_list)
-    await fill_person_film_work(person_id_list, film_id_list)
+        await fill_genre_film_work(genre_id_list, film_id_list)
+        await fill_person_film_work(person_id_list, film_id_list)
+
+        logger.info('End of filling database')
+    except sqlalchemy.exc.IntegrityError:
+        logger.info('Database is already full')
 
 
 if __name__ == '__main__':
