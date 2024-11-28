@@ -1,4 +1,17 @@
 from models.base import Base
-from models.models import ProcessedNotifications
+from models.models import (
+    DeliveryMethods,
+    EventTypes,
+    NotificationTemplates,
+    ProcessedNotifications,
+    Templates,
+)
 
-__all__ = ["Base", "ProcessedNotifications"]
+__all__ = [
+    "Base",
+    "ProcessedNotifications",
+    "EventTypes",
+    "DeliveryMethods",
+    "NotificationTemplates",
+    "Templates",
+]

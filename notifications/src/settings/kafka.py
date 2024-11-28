@@ -1,11 +1,9 @@
-from pydantic import Field
-
 from settings.base import Settings
 
 
 class KafkaSettings(Settings):
-    KAFKA_TOPICS: list[str] = Field(default_factory=list)
-    KAFKA_BOOTSTRAP_SERVERS: list[str] = Field(default_factory=list)
+    KAFKA_TOPICS: list[str]
+    KAFKA_BOOTSTRAP_SERVERS: list[str]
     KAFKA_GROUP_ID: str = "notifications"
 
 

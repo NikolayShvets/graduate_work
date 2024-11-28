@@ -4,9 +4,9 @@ from settings.base import Settings
 
 
 class SMTPSettings(Settings):
-    SMTP_HOST: str = "localhost"
-    SMTP_PORT: int = 25
-    SMTP_USER: str = "test@gmail.com"
+    SMTP_HOST: str
+    SMTP_PORT: int
+    SMTP_USER: str
     SMTP_PASSWORD: SecretStr
 
 
