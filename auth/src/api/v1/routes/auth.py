@@ -31,14 +31,12 @@ async def login(
 ) -> BearerResponseSchema:
     """Вход пользователя в аккаунт."""
     user = await user_manager.authenticate(credentials)
-    print(f'user: {user.email}')
 
     if user is None or not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=ErrorCode.LOGIN_BAD_CREDENTIALS,
         )
-    print('before login')
     return await authentication_backend.login(
         access_strategy, refresh_strategy, user, session, user_agent
     )

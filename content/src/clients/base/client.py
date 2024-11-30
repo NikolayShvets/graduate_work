@@ -67,7 +67,6 @@ class BaseClient:
         headers: dict | None = None,
         **kwargs,
     ):
-        print(22222, AsyncClient.base_url)
         async with AsyncClient(
             base_url=self._base_url,
             headers=self._headers,
@@ -105,7 +104,6 @@ class BaseClient:
         headers: dict | None = None,
         **kwargs,
     ):
-        print(f'url: {url}')
         return await self._make_request(
             method=HTTPMethods.POST,
             url=url,
