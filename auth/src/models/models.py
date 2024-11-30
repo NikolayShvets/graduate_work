@@ -11,6 +11,7 @@ from sqlalchemy import (
     ForeignKey,
     String,
     Table,
+    func,
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -72,9 +73,11 @@ class RefreshToken(Base):
 
 
 class Session(Base):
-    __table_args__ = {
-        "postgresql_partition_by": "RANGE (created_at)",
-    }
+    __table_args__ = ({"postgresql_partition_by": "RANGE (created_at)"},)
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=False), server_default=func.now(), primary_key=True
+    )
 
     user_id: Mapped[PY_UUID] = mapped_column(ForeignKey("user.id"))
     refresh_token_id: Mapped[PY_UUID] = mapped_column(ForeignKey("refreshtoken.id"))
