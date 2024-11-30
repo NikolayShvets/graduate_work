@@ -7,11 +7,11 @@ from jwt import PyJWTError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
-from src.db.redis import get_redis
-from src.models import Session, User
-from src.repository.refresh_token import refresh_token_repository
-from src.repository.session import session_repository
-from src.users.manager import UserManager
+from db.redis import get_redis
+from models import Session, User
+from repository.refresh_token import refresh_token_repository
+from repository.session import session_repository
+from users.manager import UserManager
 
 
 class RefreshJWTStrategy(JWTStrategy):

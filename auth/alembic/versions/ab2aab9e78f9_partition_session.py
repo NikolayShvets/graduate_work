@@ -57,18 +57,14 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id", "created_at"),
         postgresql_partition_by="RANGE (created_at)",
     )
-
     op.execute(
-        """CREATE TABLE IF NOT EXISTS "user_session_y2024m09" PARTITION OF "session" FOR VALUES FROM ('2024-09-01') TO ('2024-09-30')"""
+        """CREATE TABLE IF NOT EXISTS "user_session_y2024m11" PARTITION OF "session" FOR VALUES FROM ('2024-11-01') TO ('2024-12-01')"""
     )
     op.execute(
-        """CREATE TABLE IF NOT EXISTS "user_session_y2024m10" PARTITION OF "session" FOR VALUES FROM ('2024-10-01') TO ('2024-10-31')"""
+        """CREATE TABLE IF NOT EXISTS "user_session_y2024m12" PARTITION OF "session" FOR VALUES FROM ('2024-12-01') TO ('2025-01-01')"""
     )
     op.execute(
-        """CREATE TABLE IF NOT EXISTS "user_session_y2024m11" PARTITION OF "session" FOR VALUES FROM ('2024-11-01') TO ('2024-11-30')"""
-    )
-    op.execute(
-        """CREATE TABLE IF NOT EXISTS "user_session_y2024m12" PARTITION OF "session" FOR VALUES FROM ('2024-12-01') TO ('2024-12-31')"""
+        """CREATE TABLE IF NOT EXISTS "user_session_y2025m01" PARTITION OF "session" FOR VALUES FROM ('2025-01-01') TO ('2025-02-01')"""
     )
     # ### end Alembic commands ###
 

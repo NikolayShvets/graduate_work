@@ -6,7 +6,6 @@ class ApiSettings(Settings):
     OPENAPI_URL: str = "/api/content/openapi.json"
     DOCS_URL: str = "/api/content/docs"
     REDOC_URL: str = "/api/content/redoc"
-    SECRET_KEY: str
 
 
 settings = ApiSettings()

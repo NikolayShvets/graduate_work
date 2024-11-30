@@ -1,5 +1,5 @@
-from src.models.base import Base
-from src.models.models import (
+from models.base import Base
+from models.models import (
     OAuthAccount,
     RefreshToken,
     Role,
@@ -7,8 +7,6 @@ from src.models.models import (
     User,
     UserRole,
 )
-
-# TODO: Здесь необходимо импортировать все модели, чтобы прокинуть их алембику
 
 __all__ = [
     "Base",

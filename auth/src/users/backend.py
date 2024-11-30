@@ -9,9 +9,9 @@ from fastapi_users.authentication.transport import (
 from fastapi_users.types import DependencyCallable
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.models import User
-from src.users.schemas import BearerResponseSchema, RefreshResponseSchema
-from src.users.strategy import AccessJWTStrategy, RefreshJWTStrategy
+from models import User
+from users.schemas import BearerResponseSchema, RefreshResponseSchema
+from users.strategy import AccessJWTStrategy, RefreshJWTStrategy
 
 
 class RefreshableAuthenticationBackend(AuthenticationBackend):

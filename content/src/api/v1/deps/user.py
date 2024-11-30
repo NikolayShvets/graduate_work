@@ -8,8 +8,9 @@ from fastapi.security import OAuth2PasswordBearer
 from clients.auth.client import auth_client
 from clients.auth.schemas import UserRetrieveSchema
 from settings.jwt import settings
+from settings.cors import settings as cors_settings
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl=''.join([cors_settings.ORIGINS, "/api/auth/v1/jwt/login"]))
 
 
 def decode_jwt(token: str) -> dict | None:

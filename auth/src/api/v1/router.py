@@ -1,10 +1,10 @@
 from fastapi import APIRouter
 
-from src.api.v1.routes.auth import router as auth_router
-from src.api.v1.routes.oauth import router as google_oauth_router
-from src.api.v1.routes.roles import router as roles_router
-from src.api.v1.routes.session import router as session_router
-from src.api.v1.routes.user_role import router as user_role_router
+from api.v1.routes.auth import router as auth_router
+from api.v1.routes.oauth import router as google_oauth_router
+from api.v1.routes.roles import router as roles_router
+from api.v1.routes.session import router as session_router
+from api.v1.routes.user_role import router as user_role_router
 
 router = APIRouter(prefix="/api/auth/v1")
 

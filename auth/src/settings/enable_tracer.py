@@ -6,7 +6,7 @@ from opentelemetry.sdk.trace.export import (
     ConsoleSpanExporter,
 )
 
-from src.settings.base import Settings
+from settings.base import Settings
 
 
 class JaegerSettings(Settings):

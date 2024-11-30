@@ -9,10 +9,10 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from src.db import postgresql
-from src.db.postgresql import get_async_session
-from src.main import app
-from src.settings.postgresql import settings
+from db import postgresql
+from db.postgresql import get_async_session
+from main import app
+from settings.postgresql import settings
 
 postgresql.async_engine = create_async_engine(
     settings.DSN,

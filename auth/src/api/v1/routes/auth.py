@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Response, status
 from fastapi_users.router.common import ErrorCode
 
-from src.api.v1.deps.fastapi_users import (
+from api.v1.deps.fastapi_users import (
     AccessStrategy,
     CurrentUser,
     CurrentUserByRefreshToken,
@@ -13,9 +13,9 @@ from src.api.v1.deps.fastapi_users import (
     authentication_backend,
     fastapi_users,
 )
-from src.api.v1.deps.user_agent import UserAgent
-from src.api.v1.schemas.user import UserCreateSchema, UserRetrieveSchema
-from src.users.schemas import BearerResponseSchema, RefreshResponseSchema
+from api.v1.deps.user_agent import UserAgent
+from api.v1.schemas.user import UserCreateSchema, UserRetrieveSchema
+from users.schemas import BearerResponseSchema, RefreshResponseSchema
 
 router = APIRouter()
 
@@ -31,13 +31,14 @@ async def login(
 ) -> BearerResponseSchema:
     """Вход пользователя в аккаунт."""
     user = await user_manager.authenticate(credentials)
+    print(f'user: {user.email}')
 
     if user is None or not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=ErrorCode.LOGIN_BAD_CREDENTIALS,
         )
-
+    print('before login')
     return await authentication_backend.login(
         access_strategy, refresh_strategy, user, session, user_agent
     )

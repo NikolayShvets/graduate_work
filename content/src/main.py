@@ -9,6 +9,7 @@ from api import v1_router
 from db import postgresql
 from settings.api import settings as api_settings
 from settings.postgresql import settings as postgresql_settings
+from settings.cors import settings as cors_settings
 
 
 @asynccontextmanager
@@ -33,7 +34,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-origins = ["http://localhost:8090"]
+origins = [cors_settings.ORIGINS]
 
 app.add_middleware(
     CORSMiddleware,

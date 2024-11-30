@@ -4,7 +4,7 @@ class DataTransform:
         # self.logger = logging.getLogger("content")
 
     @staticmethod
-    async def transform_movies_pgdata(self, raw_data: list[dict]) -> list[dict]:
+    async def transform_movies_pgdata(raw_data: list[dict]) -> list[dict]:
         data_to_transfer = []
 
         for dict_ in raw_data:

@@ -8,9 +8,10 @@ ENV PYTHONFAULTHANDLER=1 \
     PIP_DEFAULT_TIMEOUT=100 \
     POETRY_VIRTUALENVS_CREATE=false \
     POETRY_CACHE_DIR='/var/cache/pypoetry' \
-    POETRY_HOME='/usr/local'
+    POETRY_HOME='/usr/local' \
+    PYTHONPATH='/app/src'
 
-WORKDIR /src
+WORKDIR /app
 
 RUN pip install --upgrade pip
 COPY pyproject.toml poetry.lock ./

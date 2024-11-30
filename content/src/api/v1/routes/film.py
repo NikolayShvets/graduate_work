@@ -13,6 +13,30 @@ router = APIRouter()
 data_transformer = DataTransform()
 
 
+@router.get("/search/")
+async def search(
+        title: str | None,
+        session: Session,
+        user: UserData
+) -> list[FilmResponseSchema]:
+    """
+    Поиск фильма по названию.
+    Возвращает список фильмов по заданному названию.
+    """
+    obj = await film_repository.search(session, title)
+
+    if len(obj) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Films not found"
+        )
+
+    data = await data_transformer.transform_movies_pgdata(obj)
+
+    films = [FilmResponseSchema(**film) for film in data]
+
+    return films
+
+
 @router.get("/{film_id}/")
 async def retrieve(
         film_id: UUID,
@@ -54,7 +78,7 @@ async def retrieve_all(
     """
     obj = await film_repository.get_all_films_info(session, sort=sort, genre=genre)
 
-    if obj is None:
+    if len(obj) == 0:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Films not found"
         )
@@ -65,27 +89,5 @@ async def retrieve_all(
     return films
 
 
-@router.get("/search/")
-async def search(
-        title: str | None,
-        session: Session,
-        user: UserData
-) -> list[FilmResponseSchema]:
-    """
-    Поиск фильма по названию.
-    Возвращает список фильмов по заданному названию.
-    """
-    obj = await film_repository.search(session, title)
-
-    if obj is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Films not found"
-        )
-
-    data = await data_transformer.transform_movies_pgdata(obj)
-
-    films = [FilmResponseSchema(**film) for film in data]
-
-    return films
 
 

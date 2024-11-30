@@ -2,14 +2,14 @@ from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, status
 
-from src.api.v1.deps.roles import ForAdminOnly
-from src.api.v1.deps.session import Session
-from src.api.v1.schemas.role import (
+from api.v1.deps.roles import ForAdminOnly
+from api.v1.deps.session import Session
+from api.v1.schemas.role import (
     RoleCreateSchema,
     RoleRetrieveSchema,
     RoleUpdateSchema,
 )
-from src.repository.role import role_repository
+from repository.role import role_repository
 
 router = APIRouter()
 

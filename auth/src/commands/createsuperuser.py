@@ -9,8 +9,8 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from src.repository.user import user_repository
-from src.settings.postgresql import settings
+from repository.user import user_repository
+from settings.postgresql import settings
 
 
 @click.command()

@@ -2,7 +2,7 @@ from fastapi import status
 from fastapi_users.authentication import BearerTransport
 from fastapi_users.openapi import OpenAPIResponseType
 
-from src.users.schemas import BearerResponseSchema
+from users.schemas import BearerResponseSchema
 
 
 class RefreshableBearerTransport(BearerTransport):

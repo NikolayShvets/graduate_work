@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 
-from src.api.v1.deps.fastapi_users import CurrentUser, Session
-from src.api.v1.schemas.session import SessionRetrieveSchema
-from src.repository.session import session_repository
+from api.v1.deps.fastapi_users import CurrentUser, Session
+from api.v1.schemas.session import SessionRetrieveSchema
+from repository.session import session_repository
 
 router = APIRouter()
 

@@ -1,5 +1,5 @@
-from src.models import Role
-from src.repository.base import SQLAlchemyRepository
+from models import Role
+from repository.base import SQLAlchemyRepository
 
 
 class RoleRepository(SQLAlchemyRepository[Role]):
