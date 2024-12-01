@@ -7,19 +7,20 @@ from fastapi.security import OAuth2PasswordBearer
 
 from clients.auth.client import auth_client
 from clients.auth.schemas import UserRetrieveSchema
-from settings.jwt import settings
-from settings.cors import settings as cors_settings
+from settings.api import settings as api_settings
+from settings.jwt import settings as jwt_settings
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl=''.join([cors_settings.ORIGINS, "/api/auth/v1/jwt/login"]))
+oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl=f"{api_settings.AUTH_API_URL}/auth/api/v1/jwt/login",
+)
 
 
 def decode_jwt(token: str) -> dict | None:
     try:
         decoded_token = jwt.decode(
             token,
-            settings.SECRET_KEY,
-            settings.AUDIENCE,
-            settings.JWT_ALGORITHM,
+            jwt_settings.SECRET_KEY,
+            jwt_settings.JWT_ALGORITHM,
         )
     except jwt.PyJWTError:
         return None
@@ -33,11 +34,11 @@ async def check_user(
 ) -> UserRetrieveSchema:
     try:
         return await auth_client.check(token)
-    except Exception:
+    except Exception as e:
         data = decode_jwt(token)
 
         if not data:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED) from e
 
         return UserRetrieveSchema(**data)
 

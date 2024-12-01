@@ -1,4 +1,4 @@
-.PHONY: up down local lint migrations migrate superuser
+.PHONY: up down check format migration migrations migrate superuser tests build
 
 up:
 	docker compose up -d --build
@@ -35,4 +35,4 @@ build:
 	docker --log-level=debug build --progress=plain --pull --file=Dockerfile --tag=ghcr.io/nikolayshvets/movies-auth:1.1 .
 	docker push ghcr.io/nikolayshvets/movies-auth:1.1
 
-.DEFAULT_GOAL := up
+.DEFAULT_GOAL := build
