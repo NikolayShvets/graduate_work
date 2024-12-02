@@ -48,7 +48,7 @@ class YooKassaBilling:
 
     def create_auto_payment(self, data: AutoPaymentScheme) -> OutputPaymentScheme:
         """
-        Создает новый платеж из основного платежа. Данные карты не требуются.
+        Создает рекурентный платеж из основного платежа. Данные карты не требуются.
         """
         try:
             payment = Payment.create(
