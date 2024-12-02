@@ -6,7 +6,7 @@ from api.v1.schemas.schemas import (
     InputRefundScheme,
     NewPaymentScheme,
     OutputPaymentScheme,
-    OutputRefundScheme
+    OutputRefundScheme,
 )
 
 router = APIRouter()
@@ -14,7 +14,7 @@ router = APIRouter()
 
 @router.post("/create_payment", response_model=OutputPaymentScheme)
 async def create_payment(
-        data: NewPaymentScheme, billing: Billing
+    data: NewPaymentScheme, billing: Billing
 ) -> OutputPaymentScheme:
     result = billing.create_payment(data=data)
     return OutputPaymentScheme(**result.dict())
@@ -22,7 +22,7 @@ async def create_payment(
 
 @router.post("/auto_payment", response_model=OutputPaymentScheme)
 async def auto_payment(
-        data: AutoPaymentScheme, billing: Billing
+    data: AutoPaymentScheme, billing: Billing
 ) -> OutputPaymentScheme:
     result = billing.create_auto_payment(data=data)
     return OutputPaymentScheme(**result.dict())

@@ -10,7 +10,6 @@ from api.v1.schemas.schemas import (
     InputRefundScheme,
     NewPaymentScheme,
 )
-
 from services.schemas.schemas import OutputPaymentScheme, OutputRefundScheme
 
 
