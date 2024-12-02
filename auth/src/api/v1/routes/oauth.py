@@ -29,7 +29,7 @@ oauth2_authorize_callback = OAuth2AuthorizeCallback(
     google_oauth2_client, route_name=callback_route_name
 )
 
-state_secret = api_settings.SECRET_KEY
+state_secret = api_settings.SECRET_KEY.get_secret_value()
 
 
 @router.get(

@@ -15,4 +15,3 @@ class FilmResponseSchema(Base):
     actors: list[dict[str, str | UUID]] | None
     directors: list[dict[str, str | UUID]] | None
     writers: list[dict[str, str | UUID]] | None
-

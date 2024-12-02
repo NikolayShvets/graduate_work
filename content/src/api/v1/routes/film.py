@@ -15,9 +15,7 @@ data_transformer = DataTransform()
 
 @router.get("/search/")
 async def search(
-        title: str | None,
-        session: Session,
-        user: UserData
+    title: str | None, session: Session, user: UserData
 ) -> list[FilmResponseSchema]:
     """
     Поиск фильма по названию.
@@ -39,9 +37,9 @@ async def search(
 
 @router.get("/{film_id}/")
 async def retrieve(
-        film_id: UUID,
-        session: Session,
-        user: UserData,
+    film_id: UUID,
+    session: Session,
+    user: UserData,
 ) -> FilmResponseSchema:
     """
     Получение полной информации о фильме по его идентификатору.
@@ -62,13 +60,13 @@ async def retrieve(
 
 @router.get("/")
 async def retrieve_all(
-        session: Session,
-        user: UserData,
-        sort: Annotated[
-            Literal["rating", "creation_date"] | None,
-            Query(description="Указывает поле для сортировки фильмов.")
-        ],
-        genre: str | None = Query(None, description="Фильтрует фильмы по жанру.")
+    session: Session,
+    user: UserData,
+    sort: Annotated[
+        Literal["rating", "creation_date"] | None,
+        Query(description="Указывает поле для сортировки фильмов."),
+    ],
+    genre: str | None = Query(None, description="Фильтрует фильмы по жанру."),
 ) -> list[FilmResponseSchema]:
     """
     Получение списка фильмов с возможностью фильтрации и сортировки.
@@ -87,7 +85,3 @@ async def retrieve_all(
     films = [FilmResponseSchema(**film) for film in data]
 
     return films
-
-
-
-

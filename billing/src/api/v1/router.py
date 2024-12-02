@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-# Import enpopint routers here
+from api.v1.routes.billing import router as billing_router
 
 router = APIRouter(prefix="/api/billing/v1")
 
-# Include enpoint routers here
+router.include_router(router=billing_router)

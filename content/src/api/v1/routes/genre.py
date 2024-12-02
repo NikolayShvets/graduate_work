@@ -12,9 +12,7 @@ router = APIRouter()
 
 @router.get("/{genre_id}/")
 async def retrieve(
-        session: Session,
-        genre_id: UUID,
-        user: UserData
+    session: Session, genre_id: UUID, user: UserData
 ) -> GenreResponseSchema:
     """
     Получение информации о жанре по его идентификатору.
@@ -33,10 +31,7 @@ async def retrieve(
 
 
 @router.get("/")
-async def retrieve_all(
-        session: Session,
-        user: UserData
-) -> list[GenreResponseSchema]:
+async def retrieve_all(session: Session, user: UserData) -> list[GenreResponseSchema]:
     """
     Получение всех жанров.
     Возвращает список жанров.

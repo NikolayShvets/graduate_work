@@ -28,7 +28,7 @@ genre_film_work = Table(
     Column("genre_id", ForeignKey("genre.id"), primary_key=True),
     Column("film_work_id", ForeignKey("filmwork.id"), primary_key=True),
     Column("created_at", DateTime(timezone=False), server_default=func.now()),
-    UniqueConstraint("genre_id", "film_work_id")
+    UniqueConstraint("genre_id", "film_work_id"),
 )
 
 
@@ -40,7 +40,7 @@ person_film_work = Table(
     Column("film_work_id", ForeignKey("filmwork.id"), primary_key=True),
     Column("role", Enum(Role), nullable=False),
     Column("created_at", DateTime(timezone=False), server_default=func.now()),
-    UniqueConstraint("person_id", "film_work_id", "role")
+    UniqueConstraint("person_id", "film_work_id", "role"),
 )
 
 
@@ -66,17 +66,23 @@ class Genre(Base):
 class Person(Base):
     full_name: Mapped[str] = mapped_column(String(256), nullable=False, unique=True)
 
-    films = relationship("FilmWork", secondary=person_film_work, back_populates="persons")
+    films = relationship(
+        "FilmWork", secondary=person_film_work, back_populates="persons"
+    )
 
 
 class FilmWork(Base):
     title: Mapped[str] = mapped_column(String(256), nullable=False)
     creation_date: Mapped[date] = mapped_column(Date, nullable=False)
-    rating: Mapped[float] = mapped_column(Float, CheckConstraint("rating > 0 AND rating <=10"), nullable=False)
+    rating: Mapped[float] = mapped_column(
+        Float, CheckConstraint("rating > 0 AND rating <=10"), nullable=False
+    )
     type: Mapped[str] = mapped_column(Enum(VideoType), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=True)
 
-    genres: Mapped[list["Genre"]] = relationship("Genre", secondary=genre_film_work, back_populates="films")
-    persons: Mapped[list["Person"]] = relationship("Person", secondary=person_film_work, back_populates="films")
-
-
+    genres: Mapped[list["Genre"]] = relationship(
+        "Genre", secondary=genre_film_work, back_populates="films"
+    )
+    persons: Mapped[list["Person"]] = relationship(
+        "Person", secondary=person_film_work, back_populates="films"
+    )

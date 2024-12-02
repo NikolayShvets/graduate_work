@@ -1,11 +1,10 @@
 from settings.base import Settings
 
 
-class JwtSettings(Settings):
-    AUTH_API_URL: str
-    JWT_ALGORITHM: str
-    SECRET_KEY: str
-    AUDIENCE: str = "fastapi"
+class JWTSettings(Settings):
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_LIFETIME_SECONDS: int = 60 * 15  # 15 minutes
+    REFRESH_TOKEN_LIFETIME_SECONDS: int = 60 * 60 * 24 * 14  # 14 days
 
 
-settings = JwtSettings()
+settings = JWTSettings()

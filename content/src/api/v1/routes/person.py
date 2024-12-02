@@ -12,9 +12,7 @@ router = APIRouter()
 
 @router.get("/search/")
 async def search(
-        name: str | None,
-        session: Session,
-        user: UserData
+    name: str | None, session: Session, user: UserData
 ) -> list[PersonResponseSchema]:
     """
     Поиск персоны по имени.
@@ -34,9 +32,7 @@ async def search(
 
 @router.get("/{person_id}/")
 async def details(
-        session: Session,
-        person_id: UUID,
-        user: UserData
+    session: Session, person_id: UUID, user: UserData
 ) -> PersonResponseSchema:
     """
     Получение информации о персоне по ее идентификатору.
@@ -54,10 +50,7 @@ async def details(
 
 
 @router.get("/")
-async def get_all(
-        session: Session,
-        user: UserData
-) -> list[PersonResponseSchema]:
+async def get_all(session: Session, user: UserData) -> list[PersonResponseSchema]:
     """
     Получение списка персон.
     Возвращает список персон.

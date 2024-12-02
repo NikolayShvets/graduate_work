@@ -37,6 +37,7 @@ app = FastAPI(
     redoc_url=api_settings.REDOC_URL,
     default_response_class=ORJSONResponse,
     lifespan=lifespan,
+    root_path="/auth",
 )
 
 app.add_middleware(

@@ -12,6 +12,7 @@ fastapi = "~0.115.5"
 uvicorn = "~0.32.0"
 asyncpg = "~0.30.0"
 orjson = "~3.10.11"
+yookassa = "~3.4.1"
 
 
 [tool.poetry.group.dev.dependencies]

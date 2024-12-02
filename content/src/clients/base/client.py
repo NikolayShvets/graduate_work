@@ -27,9 +27,7 @@ class HTTPMethods(enum.StrEnum):
 
 
 class BaseClient:
-    def __init__(
-        self, base_url: str, *, headers: dict[str, Any] | None = None
-    ):
+    def __init__(self, base_url: str, *, headers: dict[str, Any] | None = None):
         self._base_url = base_url
         self._headers = headers
 
@@ -37,8 +35,8 @@ class BaseClient:
     def _decode_response(response: Response) -> Any:
         try:
             return response.json()
-        except JSONDecodeError:
-            raise ResponseDecodeError
+        except JSONDecodeError as e:
+            raise ResponseDecodeError from e
 
     def _handle_response(self, response: Response) -> Any:
         if response.status_code == codes.NO_CONTENT:

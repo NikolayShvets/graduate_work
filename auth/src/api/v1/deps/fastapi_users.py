@@ -5,6 +5,7 @@ from uuid import UUID
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_users import FastAPIUsers, exceptions
+from fastapi_users.authentication import BearerTransport
 from fastapi_users.db import SQLAlchemyUserDatabase
 
 from api.v1.deps.session import Session
@@ -15,7 +16,6 @@ from users.backend import RefreshableAuthenticationBackend
 from users.manager import UserManager as _UserManager
 from users.schemas import RefreshTokenSchema
 from users.strategy import AccessJWTStrategy, RefreshJWTStrategy
-from users.transport import RefreshableBearerTransport
 
 
 async def get_user_db(
@@ -32,19 +32,19 @@ async def get_user_manager(
 
 def get_access_jwt_strategy() -> AccessJWTStrategy:
     return AccessJWTStrategy(
-        secret=api_settings.SECRET_KEY,
+        secret=api_settings.SECRET_KEY.get_secret_value(),
         lifetime_seconds=jwt_settings.ACCESS_TOKEN_LIFETIME_SECONDS,
     )
 
 
 def get_refresh_jwt_strategy() -> RefreshJWTStrategy:
     return RefreshJWTStrategy(
-        secret=api_settings.SECRET_KEY,
+        secret=api_settings.SECRET_KEY.get_secret_value(),
         lifetime_seconds=jwt_settings.REFRESH_TOKEN_LIFETIME_SECONDS,
     )
 
 
-bearer_transport = RefreshableBearerTransport(tokenUrl="/api/auth/v1/jwt/login")
+bearer_transport = BearerTransport(tokenUrl="/auth/api/v1/jwt/login")
 
 authentication_backend = RefreshableAuthenticationBackend(
     name="jwt",
