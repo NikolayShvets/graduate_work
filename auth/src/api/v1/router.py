@@ -6,7 +6,7 @@ from api.v1.routes.roles import router as roles_router
 from api.v1.routes.session import router as session_router
 from api.v1.routes.user_role import router as user_role_router
 
-router = APIRouter(prefix="/api/auth/v1")
+router = APIRouter(prefix="/api/v1")
 
 router.include_router(auth_router, prefix="/jwt", tags=["Авторизация"])
 router.include_router(roles_router, prefix="/roles", tags=["Роли"])

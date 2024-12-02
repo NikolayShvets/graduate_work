@@ -37,7 +37,6 @@ async def login(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=ErrorCode.LOGIN_BAD_CREDENTIALS,
         )
-
     return await authentication_backend.login(
         access_strategy, refresh_strategy, user, session, user_agent
     )
