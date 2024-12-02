@@ -5,12 +5,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import ORJSONResponse
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from sqladmin import Admin
 
 from api import v1_router
 from db import postgresql, redis
 from settings.api import settings as api_settings
 from settings.postgresql import settings as postgresql_settings
 from settings.redis import settings as redis_settings
+from models.admin_models import RoleAdmin, UserAdmin, UserRoleAdmin
 
 
 @asynccontextmanager
@@ -47,3 +49,15 @@ app.add_middleware(
 )
 
 app.include_router(v1_router)
+
+postgresql.async_engine = create_async_engine(
+        postgresql_settings.DSN,
+        echo=postgresql_settings.LOG_QUERIES,
+    )
+admin = Admin(app, postgresql.async_engine, title="Auth Admin")
+
+admin.add_view(RoleAdmin)
+admin.add_view(UserAdmin)
+admin.add_view(UserRoleAdmin)
+
+
