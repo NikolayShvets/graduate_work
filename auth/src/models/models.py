@@ -10,7 +10,6 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     String,
-    Table,
     func,
 )
 from sqlalchemy.dialects.postgresql import UUID
@@ -38,6 +37,7 @@ class OAuthAccount(SQLAlchemyBaseOAuthAccountTableUUID, Base):
 
 class User(SQLAlchemyBaseUserTableUUID, Base):
     roles = relationship("UserRole", back_populates="user")
+
     sessions: Mapped[list["Session"]] = relationship("Session", back_populates="user")
 
     oauth_accounts: Mapped[list[OAuthAccount]] = relationship(

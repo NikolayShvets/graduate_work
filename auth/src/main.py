@@ -12,8 +12,7 @@ from db import postgresql, redis
 from settings.api import settings as api_settings
 from settings.postgresql import settings as postgresql_settings
 from settings.redis import settings as redis_settings
-from settings.cors import settings as cors_settings
-from models.admin_models import RoleAdmin, UserAdmin, UserRoleAdmin
+from admin.admin import RoleAdmin, UserAdmin, UserRoleAdmin
 
 
 @asynccontextmanager
@@ -42,7 +41,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[cors_settings.ORIGINS],
+    allow_origins=api_settings.ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
