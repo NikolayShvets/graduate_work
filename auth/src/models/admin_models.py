@@ -8,6 +8,7 @@ class RoleAdmin(ModelView, model=Role):
     name_plural = "Роли"
     column_list = [Role.id, Role.name]
     form_excluded_columns = [Role.users, Role.created_at, Role.updated_at]
+    can_view_details = False
 
 
 class UserAdmin(ModelView, model=User):
@@ -26,3 +27,5 @@ class UserRoleAdmin(ModelView, model=UserRole):
     name = "Роль пользователя"
     name_plural = "Роли пользователей"
     column_list = [UserRole.user_id, UserRole.role_id]
+    form_excluded_columns = [UserRole.created_at, UserRole.updated_at]
+    can_view_details = False

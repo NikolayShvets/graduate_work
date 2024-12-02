@@ -59,5 +59,3 @@ admin = Admin(app, postgresql.async_engine, title="Auth Admin")
 admin.add_view(RoleAdmin)
 admin.add_view(UserAdmin)
 admin.add_view(UserRoleAdmin)
-
-
