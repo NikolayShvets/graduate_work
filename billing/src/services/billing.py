@@ -1,5 +1,4 @@
 import logging
-from uuid import UUID
 
 from fastapi import HTTPException
 from yookassa import Payment, Refund
@@ -10,8 +9,9 @@ from api.v1.schemas.schemas import (
     AutoPaymentScheme,
     InputRefundScheme,
     NewPaymentScheme,
-    OutputNewPaymentScheme,
 )
+
+from services.schemas.schemas import OutputPaymentScheme, OutputRefundScheme
 
 
 class YooKassaBilling:
@@ -20,7 +20,7 @@ class YooKassaBilling:
     def __init__(self):
         self.log = logging.getLogger("main")
 
-    def create_payment(self, data: NewPaymentScheme) -> OutputNewPaymentScheme:
+    def create_payment(self, data: NewPaymentScheme) -> OutputPaymentScheme:
         """
         Функция создает новый платеж.
         """
@@ -29,7 +29,7 @@ class YooKassaBilling:
                 {
                     "amount": {
                         "value": data.amount,
-                        "currency": data.currency,
+                        "currency": data.currency.RUB,
                     },
                     "confirmation": {
                         "type": "redirect",
@@ -40,30 +40,13 @@ class YooKassaBilling:
                     "save_payment_method": True,
                 }
             )
-
-            method_save = (
-                payment.payment_method.saved
-                if hasattr(payment.payment_method, "saved")
-                else None
-            )
-            method_id = (
-                UUID(payment.payment_method.id)
-                if hasattr(payment.payment_method, "id")
-                else None
-            )
-            # должна быть функция сохранения payment_method.id в бд для автоплатежей
-            return OutputNewPaymentScheme(
-                id=UUID(payment.id),
-                status=payment.status,
-                confirmation_url=payment.confirmation.confirmation_url,
-                payment_method_id=method_id,
-                payment_method_saved=method_save,
-            )
-
         except Exception as e:
             self.log.error(e)
+            raise HTTPException(status_code=404, detail="Item not created") from None
 
-    def create_auto_payment(self, data: AutoPaymentScheme) -> OutputNewPaymentScheme:
+        return OutputPaymentScheme(**dict(payment))
+
+    def create_auto_payment(self, data: AutoPaymentScheme) -> OutputPaymentScheme:
         """
         Создает новый платеж из основного платежа. Данные карты не требуются.
         """
@@ -79,29 +62,13 @@ class YooKassaBilling:
                     "description": data.description,
                 }
             )
-            confirmation_url = None
-            if hasattr(payment.confirmation, "confirmation_url"):
-                confirmation_url = payment.confirmation.confirmation_url
-
-            payment_method_saved = None
-            if hasattr(payment.payment_method, "saved"):
-                payment_method_saved = payment.payment_method.saved
-
-            payment_method_id = None
-            if hasattr(payment.payment_method, "id"):
-                payment_method_id = UUID(payment.payment_method.id)
-            # должна быть функция сохранения payment_method.id в бд для автоплатежей
-            return OutputNewPaymentScheme(
-                id=UUID(payment.id),
-                status=payment.status,
-                confirmation_url=confirmation_url,
-                payment_method_id=payment_method_id,
-                payment_method_saved=payment_method_saved,
-            )
         except Exception as e:
             self.log.error(e)
+            raise HTTPException(status_code=404, detail="Item not created") from None
 
-    def get_payment(self, payment_id: str) -> dict:
+        return OutputPaymentScheme(**dict(payment))
+
+    def get_payment(self, payment_id: str) -> OutputPaymentScheme:
         """
         Получает данные о платеже
         """
@@ -111,36 +78,9 @@ class YooKassaBilling:
             self.log.error("Item not found")
             raise HTTPException(status_code=404, detail="Item not found") from None
 
-        confirmation_url = None
-        if hasattr(payment.confirmation, "confirmation_url"):
-            confirmation_url = payment.confirmation.confirmation_url
+        return OutputPaymentScheme(**dict(payment))
 
-        payment_method_saved = None
-        if hasattr(payment.payment_method, "saved"):
-            payment_method_saved = payment.payment_method.saved
-
-        payment_method_id = None
-        if hasattr(payment.payment_method, "id"):
-            payment_method_id = UUID(payment.payment_method.id)
-
-        cancellation_details_party = None
-        if hasattr(payment.cancellation_details, "party"):
-            cancellation_details_party = payment.cancellation_details.party
-
-        cancellation_details_reason = None
-        if hasattr(payment.cancellation_details, "reason"):
-            cancellation_details_reason = payment.cancellation_details.party
-        return {
-            "id": UUID(payment.id),
-            "status": payment.status,
-            "confirmation_url": confirmation_url,
-            "payment_method_saved": payment_method_saved,
-            "payment_method_id": payment_method_id,
-            "cancellation_details_party": cancellation_details_party,
-            "cancellation_details_reason": cancellation_details_reason,
-        }
-
-    def create_refund(self, data: InputRefundScheme) -> dict:
+    def create_refund(self, data: InputRefundScheme) -> OutputRefundScheme:
         """
         Создает возврат средств.
         """
@@ -154,9 +94,10 @@ class YooKassaBilling:
                     "payment_id": str(data.payment_id),
                 }
             )
-            return refund
         except BadRequestError as err:
             self.log.error("Не удалось создать возврат")
             raise HTTPException(
                 status_code=404, detail="Failed to create refund"
             ) from err
+
+        return OutputRefundScheme(**dict(refund))

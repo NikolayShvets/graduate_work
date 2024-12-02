@@ -3,9 +3,7 @@ from enum import Enum, StrEnum
 from typing import Any
 from uuid import UUID
 
-from pydantic import Field, field_validator, HttpUrl
-
-from api.v1.schemas.base import Base
+from pydantic import BaseModel, HttpUrl, Field, field_validator
 
 
 class InitiatorsPaymentCancellationEnum(StrEnum):
@@ -43,14 +41,14 @@ class CurrencyEnum(StrEnum):
     EUR = "EUR"
 
 
-class StatusEnum(str, Enum):
+class StatusEnum(StrEnum):
     PENDING = "pending"
     SUCCESS = "succeeded"
     CANCELED = "canceled"
     WAITING_FOR_CAPTURE = " waiting_for_capture"
 
 
-class AmountScheme(Base):
+class AmountScheme(BaseModel):
     currency: CurrencyEnum = Field(
         description="Трехбуквенный код валюты."
     )
@@ -59,7 +57,7 @@ class AmountScheme(Base):
     )
 
 
-class Confirmation(Base):
+class Confirmation(BaseModel):
     confirmation_url: HttpUrl | None = Field(
         default=None,
         description="URL-адрес, на который будет перенаправлен пользователь для подтверждения платежа."
@@ -78,7 +76,7 @@ class Confirmation(Base):
     )
 
 
-class RecipientScheme(Base):
+class RecipientScheme(BaseModel):
     account_id: int = Field(
         description="ID магазина в YooMoney."
     )
@@ -96,7 +94,7 @@ class RecipientScheme(Base):
         raise TypeError('Тип данных должен быть int.')
 
 
-class PaymentMethodScheme(Base):
+class PaymentMethodScheme(BaseModel):
     id: UUID
     saved: bool = Field(
         description="Метод сохранения платежа для возможности автоматической полаты."
@@ -118,7 +116,7 @@ class PaymentMethodScheme(Base):
         raise TypeError('Тип данных должен быть UUID.')
 
 
-class CancellationDetailsScheme(Base):
+class CancellationDetailsScheme(BaseModel):
     party: InitiatorsPaymentCancellationEnum = Field(
         description="Инициаторы отмены платежа.",
         examples=[*InitiatorsPaymentCancellationEnum]
@@ -129,7 +127,7 @@ class CancellationDetailsScheme(Base):
     )
 
 
-class OutputPaymentScheme(Base):
+class OutputPaymentScheme(BaseModel):
     id: UUID = Field(
         description="ID платежа в YooMoney.",
         examples=["2edf862d-000f-5000-a000-15598219bb7c"]
@@ -208,7 +206,7 @@ class OutputPaymentScheme(Base):
         raise TypeError('Тип данных должен быть UUID.')
 
 
-class OutputRefundScheme(Base):
+class OutputRefundScheme(BaseModel):
     id: UUID = Field(
         description="ID возврата в YooMoney.",
         examples=["2edf862d-000f-5000-a000-15598219bb7c"]
@@ -250,28 +248,3 @@ class OutputRefundScheme(Base):
         if isinstance(value, str):
             return datetime.fromisoformat(value[:-1])
         return value
-
-
-class NewPaymentScheme(Base):
-    amount: float = Field(description="Стоимость", examples=[100.00, 500.00])
-    currency: CurrencyEnum
-    description: str | None = Field(
-        description="Описание", examples=["Оплата подписки"]
-    )
-
-
-class AutoPaymentScheme(NewPaymentScheme):
-    payment_method_id: UUID = Field(
-        description="ID первого платежа",
-        examples=["255350c9-000f-5000-a000-1f211b3ea0a7"],
-    )
-
-
-class InputRefundScheme(Base):
-    payment_id: UUID = Field(
-        description="ID платежа", examples=["255350c9-000f-5000-a000-1f211b3ea0a7"]
-    )
-    amount: float = Field(description="Стоимость", examples=[100.00, 500.00])
-    currency: CurrencyEnum = Field(
-        description="Валюта", examples=[CurrencyEnum.RUB, CurrencyEnum.EUR]
-    )
