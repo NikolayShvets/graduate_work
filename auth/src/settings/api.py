@@ -9,7 +9,7 @@ class ApiSettings(Settings):
     DOCS_URL: str = "/api/docs"
     REDOC_URL: str = "/api/redoc"
     SECRET_KEY: SecretStr
-    ORIGINS: list[str] = ["http://127.0.0.1:8002", "http://127.0.0.1:8003"]
+    ORIGINS: list[str]
 
 
 settings = ApiSettings()
