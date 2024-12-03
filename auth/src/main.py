@@ -12,7 +12,9 @@ from db import postgresql, redis
 from settings.api import settings as api_settings
 from settings.postgresql import settings as postgresql_settings
 from settings.redis import settings as redis_settings
-from admin.admin import RoleAdmin, UserAdmin, UserRoleAdmin
+from admin.role import RoleAdmin
+from admin.user import UserAdmin
+from admin.user_role import UserRoleAdmin
 
 
 @asynccontextmanager
