@@ -5,7 +5,7 @@ from settings.api import settings
 
 class AuthClient(BaseClient):
     async def check(self, token: str) -> UserRetrieveSchema:
-        user = await self._post(
+        user = await self._get(
             url="/jwt/check", headers={"Authorization": f"Bearer {token}"}
         )
         return UserRetrieveSchema.model_validate(user)

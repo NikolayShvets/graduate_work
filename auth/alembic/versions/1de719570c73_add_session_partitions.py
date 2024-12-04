@@ -1,22 +1,24 @@
 """add_session_partitions
 
-Revision ID: 26d565125d73
-Revises: f59c9a35c3d5
-Create Date: 2024-11-23 00:27:25.882529
+Revision ID: 1de719570c73
+Revises: a774591f5108
+Create Date: 2024-12-04 21:24:17.857254
 
 """
 from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
+
 from datetime import datetime, timedelta, UTC
 
 
 # revision identifiers, used by Alembic.
-revision: str = '26d565125d73'
-down_revision: Union[str, None] = 'f59c9a35c3d5'
+revision: str = '1de719570c73'
+down_revision: Union[str, None] = 'a774591f5108'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
+
 
 def add_partitions() -> None:
     TABLE_NAME = "session"
