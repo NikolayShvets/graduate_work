@@ -76,7 +76,7 @@ async def refresh(
     )
 
 
-@router.post("/check")
+@router.get("/check")
 async def check(user: CurrentUser) -> UserRetrieveSchema:
     """Проверка активности пользователя."""
     return user

@@ -17,7 +17,11 @@ from users.manager import UserManager
 class RefreshJWTStrategy(JWTStrategy):
     async def write_token(self, user: models.UP) -> str:
         data = {
-            "sub": str(user.id),
+            "id": str(user.id),
+            "email": user.email,
+            "is_active": user.is_active,
+            "is_superuser": user.is_superuser,
+            "is_verified": user.is_verified,
             "aud": self.token_audience,
             "type": "refresh",
         }
@@ -47,7 +51,7 @@ class RefreshJWTStrategy(JWTStrategy):
         except PyJWTError:
             return None
 
-        user_id = data.get("sub")
+        user_id = data.get("id")
 
         if user_id is None:
             return None
@@ -152,7 +156,11 @@ class RefreshJWTStrategy(JWTStrategy):
 class AccessJWTStrategy(JWTStrategy):
     async def write_token(self, user: models.UP) -> str:
         data = {
-            "sub": str(user.id),
+            "id": str(user.id),
+            "email": user.email,
+            "is_active": user.is_active,
+            "is_superuser": user.is_superuser,
+            "is_verified": user.is_verified,
             "aud": self.token_audience,
             "type": "access",
         }
@@ -180,7 +188,7 @@ class AccessJWTStrategy(JWTStrategy):
         except PyJWTError:
             return None
 
-        user_id = data.get("sub")
+        user_id = data.get("id")
 
         if user_id is None:
             return None

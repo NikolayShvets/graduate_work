@@ -4,8 +4,6 @@ services:
     container_name: movies-postgres
     expose:
       - 5432
-    ports:
-      - "5432:5432"
     volumes:
       - ./postgresql/data:/var/lib/postgresql/data
       - ./postgresql/initdb:/docker-entrypoint-initdb.d
