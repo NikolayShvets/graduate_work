@@ -15,6 +15,7 @@ from settings.redis import settings as redis_settings
 from admin.role import RoleAdmin
 from admin.user import UserAdmin
 from admin.user_role import UserRoleAdmin
+from admin.admin_auth import AdminAuth
 
 
 @asynccontextmanager
@@ -56,7 +57,9 @@ postgresql.async_engine = create_async_engine(
         postgresql_settings.DSN,
         echo=postgresql_settings.LOG_QUERIES,
     )
-admin = Admin(app, postgresql.async_engine, title="Auth Admin")
+
+authentication_backend = AdminAuth(secret_key=api_settings.SECRET_KEY)
+admin = Admin(app, postgresql.async_engine, title="Auth Admin", authentication_backend=authentication_backend)
 
 admin.add_view(RoleAdmin)
 admin.add_view(UserAdmin)
