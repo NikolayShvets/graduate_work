@@ -5,8 +5,8 @@ from api.v1.schemas.base import Base
 
 
 class SubscriptionBaseSchema(Base):
-    user_id: UUID
     tarrif_id: UUID
+    user_id: UUID
 
 
 class SubscriptionCreateSchema(SubscriptionBaseSchema):
@@ -19,6 +19,6 @@ class SubscriptionUpdateSchema(SubscriptionBaseSchema):
 
 class SubscriptionRetrieveSchema(SubscriptionBaseSchema):
     id: UUID
-    next_payment_date: datetime
+    next_payment_date: datetime | None = None
     created_at: datetime
     updated_at: datetime

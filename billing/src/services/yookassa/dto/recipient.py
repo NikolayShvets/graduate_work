@@ -1,4 +1,4 @@
-from services.billing.dto.base import Base
+from services.yookassa.dto.base import Base
 
 
 class Recipient(Base):

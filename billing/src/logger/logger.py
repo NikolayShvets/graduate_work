@@ -1,17 +1,17 @@
-import logger
+import logging
 import os
 
 from settings.logger import settings as logging_settings
 
 os.makedirs(os.path.dirname(logging_settings.LOG_FILE_PATH), exist_ok=True)
 
-logger.basicConfig(
-    level=logger.INFO,
+logging.basicConfig(
+    level=logging.INFO,
     format=logging_settings.LOG_FORMAT,
     handlers=[
-        logger.FileHandler(logging_settings.LOG_FILE_PATH),
-        logger.StreamHandler(),
+        logging.FileHandler(logging_settings.LOG_FILE_PATH),
+        logging.StreamHandler(),
     ],
 )
 
-logger = logger.getLogger(logging_settings.LOG_NAME)
+logger = logging.getLogger(logging_settings.LOG_NAME)

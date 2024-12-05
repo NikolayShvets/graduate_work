@@ -1,7 +1,7 @@
 services:
   auth:
     container_name: movies-auth
-    image: ghcr.io/nikolayshvets/movies-auth:1.1
+    build: .
     expose:
       - 8001
     env_file:

@@ -10,17 +10,16 @@ from clients.auth.schemas import UserRetrieveSchema
 from settings.api import settings as api_settings
 from settings.jwt import settings as jwt_settings
 
-oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl=f"{api_settings.AUTH_API_URL}/auth/api/v1/jwt/login",
-)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl=api_settings.EXTERNAL_LOGIN_URL)
 
 
 def decode_jwt(token: str) -> dict | None:
     try:
         decoded_token = jwt.decode(
-            token,
-            api_settings.SECRET_KEY,
-            jwt_settings.ALGORITHM,
+            jwt=token,
+            key=jwt_settings.SECRET_KEY.get_secret_value(),
+            algorithms=[jwt_settings.ALGORITHM],
+            audience=jwt_settings.AUD,
         )
     except jwt.PyJWTError:
         return None

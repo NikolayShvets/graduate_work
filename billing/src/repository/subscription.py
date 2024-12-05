@@ -3,6 +3,7 @@ from repository.base import SQLAlchemyRepository
 
 
 class SubscriptionRepository(SQLAlchemyRepository[Subscriptions]):
+    # async def
     pass
 
 

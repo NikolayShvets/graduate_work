@@ -1,8 +1,8 @@
 """initial_migration
 
-Revision ID: 8d607f3717ad
+Revision ID: d6012d013b60
 Revises: 
-Create Date: 2024-12-04 00:15:03.463552
+Create Date: 2024-12-06 00:30:45.181759
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = '8d607f3717ad'
+revision: str = 'd6012d013b60'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -61,7 +61,7 @@ def upgrade() -> None:
     )
     op.create_table('tariffs',
     sa.Column('name', sa.String(length=255), nullable=False),
-    sa.Column('description', sa.Text(), nullable=True),
+    sa.Column('description', sa.Text(), nullable=False),
     sa.Column('plan_id', sa.Uuid(), nullable=False),
     sa.Column('currency', postgresql.ENUM('RUB', 'USD', 'EUR', name='currency'), nullable=False),
     sa.Column('price', sa.Integer(), nullable=False),
@@ -76,7 +76,7 @@ def upgrade() -> None:
     op.create_table('subscriptions',
     sa.Column('user_id', sa.UUID(), nullable=False),
     sa.Column('tarrif_id', sa.Uuid(), nullable=False),
-    sa.Column('payment_method_id', sa.UUID(), nullable=False),
+    sa.Column('payment_method_id', sa.UUID(), nullable=True),
     sa.Column('next_payment_date', sa.DateTime(), server_default=sa.text('now()'), nullable=True),
     sa.Column('id', sa.Uuid(), server_default=sa.text('gen_random_uuid()'), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
@@ -86,9 +86,9 @@ def upgrade() -> None:
     sa.UniqueConstraint('user_id')
     )
     op.create_table('transactions',
+    sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('subscription_id', sa.Uuid(), nullable=False),
     sa.Column('status', postgresql.ENUM('PENDING', 'SUCCESS', 'FAILED', 'CANCELED', name='transaction_status'), nullable=False),
-    sa.Column('id', sa.Uuid(), server_default=sa.text('gen_random_uuid()'), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.ForeignKeyConstraint(['subscription_id'], ['subscriptions.id'], ),
@@ -106,4 +106,8 @@ def downgrade() -> None:
     op.drop_table('plans2services')
     op.drop_table('services')
     op.drop_table('plans')
+
+    op.execute('DROP TYPE IF EXISTS currency CASCADE;')
+    op.execute('DROP TYPE IF EXISTS auto_payment_period CASCADE;')
+    op.execute('DROP TYPE IF EXISTS transaction_status CASCADE;')
     # ### end Alembic commands ###

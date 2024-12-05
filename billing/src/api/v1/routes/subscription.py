@@ -1,10 +1,11 @@
 from decimal import Decimal
+from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, status
 
-from api.v1.deps.billing import YooKassa
 from api.v1.deps.session import Session
 from api.v1.deps.user import User
+from api.v1.deps.yookassa import YooKassa
 from api.v1.schemas.subscription import (
     SubscriptionCreateSchema,
     SubscriptionRetrieveSchema,
@@ -14,13 +15,14 @@ from models import Tariffs
 from repository.subscription import subscription_repository
 from repository.tariff import tariff_repository
 from repository.transaction import transaction_repository
-from services.billing.dto.amount import Amount
-from services.billing.dto.payment import Payment
+from services.yookassa.dto.amount import Amount
+from services.yookassa.dto.confirmation import Confirmation
+from services.yookassa.dto.payment import Payment
 
 router = APIRouter()
 
 
-@router.get("/subscriptions/mine")
+@router.get("/mine")
 async def retrive_mine(session: Session, user: User) -> SubscriptionRetrieveSchema:
     """Получить подписку пользователя."""
 
@@ -32,32 +34,45 @@ async def retrive_mine(session: Session, user: User) -> SubscriptionRetrieveSche
     return subscription
 
 
-@router.post("/subscriptions")
-async def create(
+@router.post("")
+async def subscribe(
     session: Session,
     yoo_kassa: YooKassa,
-    data: SubscriptionCreateSchema,
-    _: User,
+    tarrif_id: UUID,
+    user: User,
 ) -> SubscriptionRetrieveSchema:
-    """Создать подписку."""
+    """Оплатить подписку."""
 
-    if await subscription_repository.exists(session=session, user_id=data.user_id):
+    if not await tariff_repository.exists(session=session, id=tarrif_id):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    if await subscription_repository.exists(session=session, user_id=user.id):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT)
 
-    tariff: Tariffs = await tariff_repository.get(session=session, id=data.tarrif_id)
+    tariff: Tariffs = await tariff_repository.get(session=session, id=tarrif_id)
 
-    payment: Payment = await yoo_kassa.create_payment(
+    subscription = await subscription_repository.create(
+        session=session,
+        data=SubscriptionCreateSchema(
+            user_id=user.id,
+            tarrif_id=tarrif_id,
+        ).model_dump(),
+        commit=False,
+    )
+
+    payment = await yoo_kassa.create_recurrent_payment(
         amount=Amount(
             value=Decimal(tariff.price) / Decimal(100),
             currency=tariff.currency,
         ),
-        auto_payment=True,
+        confirmation=Confirmation(
+            type="redirect",
+            return_url="https://google.com",
+        ),
+        description=tariff.description,
     )
-    subscription = await subscription_repository.create(
-        session=session,
-        data=data.model_dump() | {"payment_method_id": payment.payment_method.id},
-        commit=False,
-    )
+
+    # TODO: Мб создавать уже в callback?
     await transaction_repository.create(
         session=session,
         data=TransactionCreateSchema(
@@ -70,6 +85,7 @@ async def create(
     return subscription
 
 
+@router.put("")
 async def cancel(session: Session, user: User) -> SubscriptionRetrieveSchema:
     """Отменить подписку."""
 
@@ -83,3 +99,9 @@ async def cancel(session: Session, user: User) -> SubscriptionRetrieveSchema:
         obj=subscription,
         data={"next_payment_date": None},
     )
+
+
+@router.get("/payment")
+async def get_payment(yoo_kassa: YooKassa, payment_id: UUID) -> Payment:
+    """Ручка нужна только для тестов."""
+    return await yoo_kassa.get_payment(payment_id=payment_id)

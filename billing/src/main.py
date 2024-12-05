@@ -36,6 +36,7 @@ app = FastAPI(
     redoc_url=api_settings.REDOC_URL,
     default_response_class=ORJSONResponse,
     lifespan=lifespan,
+    root_path=api_settings.ROOT_PATH,
 )
 
 app.include_router(v1_router)

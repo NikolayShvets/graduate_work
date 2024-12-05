@@ -55,7 +55,7 @@ class Plans2Services(Base):
 
 class Tariffs(Base):
     name: Mapped[str] = mapped_column(String(255), unique=True)
-    description: Mapped[str] = mapped_column(Text, nullable=True)
+    description: Mapped[str] = mapped_column(Text)
     plan_id: Mapped[PY_UUID] = mapped_column(ForeignKey("plans.id"))
     currency: Mapped[Currency] = mapped_column(ENUM(Currency, name="currency"))
     price: Mapped[int] = mapped_column(Integer)
@@ -82,7 +82,9 @@ class Tariffs(Base):
 class Subscriptions(Base):
     user_id: Mapped[PY_UUID] = mapped_column(UUID(as_uuid=True), unique=True)
     tarrif_id: Mapped[PY_UUID] = mapped_column(ForeignKey("tariffs.id"))
-    payment_method_id: Mapped[PY_UUID] = mapped_column(UUID(as_uuid=True))
+    payment_method_id: Mapped[PY_UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=True
+    )
     next_payment_date: Mapped[datetime] = mapped_column(
         DateTime(timezone=False), server_default=func.now(), nullable=True
     )
@@ -95,11 +97,9 @@ class Subscriptions(Base):
     def __str__(self):
         return f"Subscription ({self.id})"
 
-    def is_active(self) -> bool:
-        return self.next_payment_date is not None
-
 
 class Transactions(Base):
+    id = mapped_column(UUID(as_uuid=True), primary_key=True)
     subscription_id: Mapped[PY_UUID] = mapped_column(ForeignKey("subscriptions.id"))
     status: Mapped[TransactionStatus] = mapped_column(
         ENUM(TransactionStatus, name="transaction_status"),

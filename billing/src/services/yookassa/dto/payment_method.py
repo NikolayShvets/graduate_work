@@ -1,7 +1,7 @@
 from uuid import UUID
 
-from services.billing.dto.base import Base
-from services.billing.dto.types import PaymentMethodType
+from services.yookassa.dto.base import Base
+from services.yookassa.dto.types import PaymentMethodType
 
 
 class PaymentMethod(Base):

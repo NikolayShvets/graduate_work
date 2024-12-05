@@ -8,7 +8,7 @@ from models.types import AutoPaymentPeriod, Currency
 
 class TariffBaseSchema(Base):
     name: str
-    description: str
+    description: str | None = None
     plan_id: UUID
     currency: Currency
     price: Decimal

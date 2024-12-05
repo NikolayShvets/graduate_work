@@ -10,14 +10,14 @@ from repository.tariff import tariff_repository
 router = APIRouter()
 
 
-@router.get("/tariffs")
+@router.get("")
 async def retrive_all(session: Session, _: User) -> list[TariffRetrieveSchema]:
     """Получить все тарифы."""
 
     return await tariff_repository.filter(session=session)
 
 
-@router.get("/tariffs/{tariff_id}")
+@router.get("/{tariff_id}")
 async def retrive_one(
     session: Session, tariff_id: UUID, _: User
 ) -> TariffRetrieveSchema:
