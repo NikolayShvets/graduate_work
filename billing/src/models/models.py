@@ -99,8 +99,8 @@ class Subscriptions(Base):
 
 
 class Transactions(Base):
-    id = mapped_column(UUID(as_uuid=True), primary_key=True)
     subscription_id: Mapped[PY_UUID] = mapped_column(ForeignKey("subscriptions.id"))
+    payment_id = mapped_column(UUID(as_uuid=True))
     status: Mapped[TransactionStatus] = mapped_column(
         ENUM(TransactionStatus, name="transaction_status"),
         default=TransactionStatus.PENDING,
