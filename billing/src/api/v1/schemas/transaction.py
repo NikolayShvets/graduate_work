@@ -11,7 +11,7 @@ class TransactionBaseSchema(Base):
 
 
 class TransactionCreateSchema(TransactionBaseSchema):
-    id: UUID
+    payment_id: UUID
     status: TransactionStatus = TransactionStatus.PENDING
 
 
@@ -20,5 +20,6 @@ class TransactionUpdateSchema(TransactionBaseSchema):
 
 
 class TransactionRetrieveSchema(TransactionBaseSchema):
+    id: UUID
     created_at: datetime
     updated_at: datetime

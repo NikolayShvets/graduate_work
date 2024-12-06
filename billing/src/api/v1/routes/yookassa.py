@@ -27,6 +27,7 @@ async def callback(session: Session, callback: Callback) -> None:
             session=session,
             obj=transcation,
             data={"status": TransactionStatus.SUCCESS},
+            commit=False,
         )
 
         await subscription_repository.update(
@@ -41,6 +42,7 @@ async def callback(session: Session, callback: Callback) -> None:
                     )
                 ).replace(tzinfo=None),
             },
+            commit=True,
         )
 
     if callback.event == EventType.PAYMENT_CANCELED:

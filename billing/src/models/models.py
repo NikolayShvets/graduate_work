@@ -14,7 +14,7 @@ from sqlalchemy.dialects.postgresql import ENUM, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import Base
-from models.types import AutoPaymentPeriod, Currency, TransactionStatus
+from models.types import AutoPaymentPeriod, Currency, TransactionStatus, TransactionType
 
 
 class Services(Base):
@@ -104,6 +104,9 @@ class Transactions(Base):
     status: Mapped[TransactionStatus] = mapped_column(
         ENUM(TransactionStatus, name="transaction_status"),
         default=TransactionStatus.PENDING,
+    )
+    type: Mapped[TransactionType] = mapped_column(
+        ENUM(TransactionType, name="transaction_type")
     )
 
     subscription: Mapped[Subscriptions] = relationship(

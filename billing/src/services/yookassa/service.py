@@ -4,13 +4,15 @@ from typing import Any
 from uuid import UUID
 
 from yookassa import Payment as YooPayment
+from yookassa import Refund as YooRefund
 from yookassa.client import NotFoundError
-from yookassa.domain.response import PaymentResponse
+from yookassa.domain.response import PaymentResponse, RefundResponse
 
 from logger import logger
 from services.yookassa.dto.amount import Amount
 from services.yookassa.dto.confirmation import Confirmation
 from services.yookassa.dto.payment import Payment
+from services.yookassa.dto.refund import Refund
 
 
 class YooKassa:
@@ -82,3 +84,20 @@ class YooKassa:
             raise e
 
         return Payment.model_validate(payment)
+
+    async def create_refund(self, payment_id: UUID, amount: Amount) -> Payment:
+        data = {
+            "payment_id": str(payment_id),
+            "amount": {
+                "value": amount.value,
+                "currency": amount.currency,
+            },
+        }
+
+        try:
+            refund: RefundResponse = await self._run_sync_async(YooRefund.create, data)
+        except Exception as e:
+            logger.exception("Error creating refund: %s", e)
+            raise
+
+        return Refund.model_validate(refund)

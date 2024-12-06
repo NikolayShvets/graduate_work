@@ -8,6 +8,12 @@ class PaymentStatus(StrEnum):
     CANCELED = "canceled"
 
 
+class RefundStatus(StrEnum):
+    PENDING = "pending"
+    SUCCEEDED = "succeeded"
+    CANCELED = "canceled"
+
+
 class Currency(StrEnum):
     RUB = "RUB"
     USD = "USD"

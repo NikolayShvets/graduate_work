@@ -17,3 +17,8 @@ class TransactionStatus(StrEnum):
     SUCCESS = "SUCCESS"
     FAILED = "FAILED"
     CANCELED = "CANCELED"
+
+
+class TransactionType(StrEnum):
+    PAYMENT = "PAYMENT"
+    REFUND = "REFUND"
