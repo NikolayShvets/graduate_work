@@ -1,20 +1,20 @@
+from fastapi import Request, status
+from fastapi.exceptions import HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
+from fastapi_users.router.common import ErrorCode
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from sqladmin.authentication import AuthenticationBackend
-from fastapi import Request, status
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
-from fastapi.security import OAuth2PasswordRequestForm
-from fastapi.exceptions import HTTPException
-from fastapi_users.router.common import ErrorCode
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import joinedload
 
 from api.v1.deps.fastapi_users import (
     OAuth2Credentials,
-    get_user_manager,
     get_user_db,
+    get_user_manager,
 )
-from settings.postgresql import settings
-from repository.user import user_repository
 from models.models import User, UserRole
+from repository.user import user_repository
+from settings.postgresql import settings
 
 
 class AdminAuth(AuthenticationBackend):
