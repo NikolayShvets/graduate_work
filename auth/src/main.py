@@ -11,6 +11,7 @@ from db import postgresql, redis
 from settings.api import settings as api_settings
 from settings.postgresql import settings as postgresql_settings
 from settings.redis import settings as redis_settings
+from notifications.producer import kafka_producer
 
 
 @asynccontextmanager
@@ -23,7 +24,9 @@ async def lifespan(_: FastAPI):
     postgresql.async_session = async_sessionmaker(
         postgresql.async_engine, expire_on_commit=False
     )
+    await kafka_producer.start()
     yield
+    await kafka_producer.stop()
     await redis.redis_conn.close()
     await postgresql.async_engine.dispose()
 

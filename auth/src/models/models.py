@@ -43,6 +43,8 @@ class OAuthAccount(SQLAlchemyBaseOAuthAccountTableUUID, Base):
 
 
 class User(SQLAlchemyBaseUserTableUUID, Base):
+    name: Mapped[str] = mapped_column(String(NAME_STR_LEN), nullable=True)
+    surname: Mapped[str] = mapped_column(String(NAME_STR_LEN), nullable=True)
     roles: Mapped[list["Role"]] = relationship(
         "Role", secondary=user_role, back_populates="users"
     )
