@@ -19,10 +19,6 @@ class RoleChecker:
             session, id=user.id, options=[joinedload(User.roles).joinedload(UserRole.role)]
         )
         role_names = {user_role.role.name for user_role in user.roles}
-        print(f'\nin role_checker()')
-        print(f'\tuser: {user.email}')
-        print(f'\tuser_roles: {role_names}')
-
 
         if not role_names.intersection(self._allowed_roles) and not user.is_superuser:
             raise HTTPException(
