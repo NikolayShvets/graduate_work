@@ -1,14 +1,12 @@
-from typing import Any, TypeVar
+from typing import Any
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.base import Base
 
-T = TypeVar("T", bound=Base)
 
-
-class SQLAlchemyRepository[T]:
+class SQLAlchemyRepository[T: Base]:
     def __init__(self, model: type[T]) -> None:
         self._model = model
 

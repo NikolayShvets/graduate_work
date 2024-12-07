@@ -20,7 +20,8 @@ from repository.transaction import transaction_repository
 from services.yookassa.dto.amount import Amount
 from services.yookassa.dto.confirmation import Confirmation
 from services.yookassa.dto.payment import Payment
-from services.yookassa.dto.types import RefundStatus
+from services.yookassa.dto.types import ConfirmationType, RefundStatus
+from settings.yookassa import settings as yookassa_settings
 
 router = APIRouter()
 
@@ -69,8 +70,8 @@ async def subscribe(
             currency=tariff.currency,
         ),
         confirmation=Confirmation(
-            type="redirect",
-            return_url="https://google.com",
+            type=ConfirmationType.REDIRECT,
+            return_url=yookassa_settings.CONFIRMATION_RETURN_URL,
         ),
         description=tariff.description,
     )
@@ -135,28 +136,24 @@ async def refund(session: Session, user: User, yoo_kassa: YooKassa) -> Payment:
         ).model_dump(),
     )
 
-    try:
-        refund = await yoo_kassa.create_refund(
-            payment_id=subscription.transactions[-1].payment_id,
-            amount=Amount(
-                value=Decimal(subscription.tariff.price) / Decimal(100),
-                currency=subscription.tariff.currency,
-            ),
-        )
-    except Exception:
-        transaction_status = TransactionStatus.FAILED
-    else:
-        if refund.status == RefundStatus.SUCCESS:
-            transaction_status = TransactionStatus.SUCCESS
-        if refund.status == RefundStatus.CANCELED:
-            transaction_status = TransactionStatus.CANCELED
-        if refund.status == RefundStatus.PENDING:
-            transaction_status = TransactionStatus.PENDING
+    refund = await yoo_kassa.create_refund(
+        payment_id=subscription.transactions[-1].payment_id,
+        amount=Amount(
+            value=Decimal(subscription.tariff.price) / Decimal(100),
+            currency=subscription.tariff.currency,
+        ),
+    )
+
+    statuses: dict[RefundStatus, TransactionStatus] = {
+        RefundStatus.SUCCESS: TransactionStatus.SUCCESS,
+        RefundStatus.CANCELED: TransactionStatus.CANCELED,
+        RefundStatus.PENDING: TransactionStatus.PENDING,
+    }
 
     await transaction_repository.update(
         session=session,
         obj=transaction,
-        data={"status": transaction_status},
+        data={"status": statuses[refund.status]},
     )
 
     return refund

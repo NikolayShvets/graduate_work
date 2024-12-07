@@ -85,7 +85,7 @@ class YooKassa:
 
         return Payment.model_validate(payment)
 
-    async def create_refund(self, payment_id: UUID, amount: Amount) -> Payment:
+    async def create_refund(self, payment_id: UUID, amount: Amount) -> Refund:
         data = {
             "payment_id": str(payment_id),
             "amount": {
