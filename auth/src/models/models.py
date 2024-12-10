@@ -51,7 +51,7 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
 class Role(Base):
     name: Mapped[UUID] = mapped_column(String(NAME_STR_LEN), unique=True)
 
-    users = relationship("UserRole",  back_populates="role")
+    users = relationship("UserRole", back_populates="role")
 
     def __str__(self) -> str:
         return f"Role ({self.id}) {self.name}"

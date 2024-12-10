@@ -20,14 +20,14 @@ from settings.postgresql import settings
 class AdminAuth(AuthenticationBackend):
     def __init__(self, secret_key: str):
         super().__init__(secret_key=secret_key)
-        self._async_session: AsyncSession | None = None
-        self._allowed_roles: list[str] = ['admin']
+        self.async_session: AsyncSession | None = None
+        self._allowed_roles: list[str] = ["admin"]
 
         self.init_session()
 
     def init_session(self):
         async_engine = create_async_engine(settings.DSN, echo=settings.LOG_QUERIES)
-        self._async_session = async_sessionmaker(async_engine, expire_on_commit=False)
+        self.async_session = async_sessionmaker(async_engine, expire_on_commit=False)
 
     @staticmethod
     async def get_user_manager(session: AsyncSession) -> SQLAlchemyUserDatabase:
@@ -66,7 +66,9 @@ class AdminAuth(AuthenticationBackend):
 
         async with self.async_session() as session:
             user = await user_repository.get(
-                session, id=token, options=[joinedload(User.roles).joinedload(UserRole.role)]
+                session,
+                id=token,
+                options=[joinedload(User.roles).joinedload(UserRole.role)],
             )
 
         role_names = {user_role.role.name for user_role in user.roles}

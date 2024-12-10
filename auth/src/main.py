@@ -54,12 +54,17 @@ app.add_middleware(
 app.include_router(v1_router)
 
 postgresql.async_engine = create_async_engine(
-        postgresql_settings.DSN,
-        echo=postgresql_settings.LOG_QUERIES,
-    )
+    postgresql_settings.DSN,
+    echo=postgresql_settings.LOG_QUERIES,
+)
 
 authentication_backend = AdminAuth(secret_key=api_settings.SECRET_KEY)
-admin = Admin(app, postgresql.async_engine, title="Auth Admin", authentication_backend=authentication_backend)
+admin = Admin(
+    app,
+    postgresql.async_engine,
+    title="Auth Admin",
+    authentication_backend=authentication_backend,
+)
 
 admin.add_view(RoleAdmin)
 admin.add_view(UserAdmin)

@@ -16,7 +16,9 @@ class RoleChecker:
     async def __call__(self, user: CurrentUser, session: Session) -> bool:
         # TODO: туповато, но переопределять методы UserManager из fastapi-users довольно муторно
         user = await user_repository.get(
-            session, id=user.id, options=[joinedload(User.roles).joinedload(UserRole.role)]
+            session,
+            id=user.id,
+            options=[joinedload(User.roles).joinedload(UserRole.role)],
         )
         role_names = {user_role.role.name for user_role in user.roles}
 

@@ -1,7 +1,7 @@
 """alter_userrole
 
 Revision ID: 18f6a903a2e2
-Revises: 26d565125d73
+Revises: 1de719570c73
 Create Date: 2024-12-02 19:15:17.964635
 
 """
@@ -13,7 +13,7 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision: str = '18f6a903a2e2'
-down_revision: Union[str, None] = '26d565125d73'
+down_revision: Union[str, None] = '1de719570c73'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
