@@ -40,18 +40,18 @@ class AdminAuth(AuthenticationBackend):
         return OAuth2Credentials(username=form["username"], password=form["password"])
 
     async def login(self, request: Request) -> bool:
+        credentials = await self.get_credentials(request)
+
         async with self.async_session() as session:
             user_manager = await self.get_user_manager(session)
+            user = await user_manager.authenticate(credentials=credentials)
 
-        credentials = await self.get_credentials(request)
-        user = await user_manager.authenticate(credentials=credentials)
-
-        if user is None or not user.is_active:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=ErrorCode.LOGIN_BAD_CREDENTIALS,
-            )
-        request.session.update({"token": str(user.id)})
+            if user is None or not user.is_active:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=ErrorCode.LOGIN_BAD_CREDENTIALS,
+                )
+            request.session.update({"token": str(user.id)})
         return True
 
     async def logout(self, request: Request) -> bool:
@@ -71,12 +71,12 @@ class AdminAuth(AuthenticationBackend):
                 options=[joinedload(User.roles).joinedload(UserRole.role)],
             )
 
-        role_names = {user_role.role.name for user_role in user.roles}
+            role_names = {user_role.role.name for user_role in user.roles}
 
-        if not role_names.intersection(self._allowed_roles) and not user.is_superuser:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Not enough permissions",
-            )
+            if not role_names.intersection(self._allowed_roles) and not user.is_superuser:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Not enough permissions",
+                )
 
         return True
