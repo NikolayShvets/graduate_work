@@ -14,6 +14,7 @@ from api.v1.deps.fastapi_users import (
     fastapi_users,
 )
 from api.v1.deps.user_agent import UserAgent
+from api.v1.deps.roles import ForAdminOnly
 from api.v1.schemas.user import UserCreateSchema, UserRetrieveSchema
 from users.schemas import BearerResponseSchema, RefreshResponseSchema
 
@@ -80,6 +81,12 @@ async def refresh(
 async def check(user: CurrentUser) -> UserRetrieveSchema:
     """Проверка активности пользователя."""
     return user
+
+
+@router.get("/check_admin")
+async def check_admin(is_admin: ForAdminOnly) -> bool:
+    """Проверка прав пользователей."""
+    return is_admin
 
 
 router.include_router(
