@@ -5,6 +5,7 @@ from fastapi.responses import ORJSONResponse
 from sqladmin import Admin
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
+from admin.admin_auth import AdminAuth
 from admin.filmwork import FilmWorkAdmin
 from admin.genre import GenreAdmin
 from admin.genre_filmwork import GenreFilmWorkAdmin
@@ -13,6 +14,7 @@ from admin.person_filmwork import PersonFilmWorkAdmin
 from api import v1_router
 from db import postgresql
 from settings.api import settings as api_settings
+from settings.jwt import settings as jwt_settings
 from settings.postgresql import settings as postgresql_settings
 
 
@@ -46,7 +48,13 @@ postgresql.async_engine = create_async_engine(
     echo=postgresql_settings.LOG_QUERIES,
 )
 
-admin = Admin(app, postgresql.async_engine, title="Content Admin")
+authentication_backend = AdminAuth(secret_key=jwt_settings.SECRET_KEY)
+admin = Admin(
+    app,
+    postgresql.async_engine,
+    title="Content Admin",
+    authentication_backend=authentication_backend,
+)
 
 admin.add_view(GenreAdmin)
 admin.add_view(FilmWorkAdmin)
