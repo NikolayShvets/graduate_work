@@ -18,7 +18,7 @@ router = APIRouter()
 async def callback(session: Session, callback: Callback) -> None:
     transcation = await transaction_repository.get(
         session=session,
-        id=callback.object.id,
+        payment_id=callback.object.id,
         options=joinedload(Transactions.subscription).joinedload(Subscriptions.tariff),
     )
 

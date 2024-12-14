@@ -81,7 +81,7 @@ class Tariffs(Base):
 
 class Subscriptions(Base):
     user_id: Mapped[PY_UUID] = mapped_column(UUID(as_uuid=True), unique=True)
-    tarrif_id: Mapped[PY_UUID] = mapped_column(ForeignKey("tariffs.id"))
+    tariff_id: Mapped[PY_UUID] = mapped_column(ForeignKey("tariffs.id"))
     payment_method_id: Mapped[PY_UUID] = mapped_column(
         UUID(as_uuid=True), nullable=True
     )

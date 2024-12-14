@@ -20,6 +20,7 @@ from repository.transaction import transaction_repository
 from services.yookassa.dto.amount import Amount
 from services.yookassa.dto.confirmation import Confirmation
 from services.yookassa.dto.payment import Payment
+from services.yookassa.dto.refund import Refund
 from services.yookassa.dto.types import ConfirmationType, RefundStatus
 from settings.yookassa import settings as yookassa_settings
 
@@ -107,37 +108,24 @@ async def cancel(session: Session, user: User) -> SubscriptionRetrieveSchema:
 
 
 @router.post("/refund")
-async def refund(session: Session, user: User, yoo_kassa: YooKassa) -> Payment:
+async def refund(session: Session, user: User, yoo_kassa: YooKassa) -> Refund:
     """Вернуть деньги за текущий период подписки."""
 
     subscription = await subscription_repository.get(
         session=session,
         user_id=user.id,
-        options=[
-            joinedload(Subscriptions.tariff),
-            joinedload(Subscriptions.transactions),
-        ],
+        options=joinedload(Subscriptions.tariff),
     )
 
-    if subscription is None:
+    last_success_payment = await transaction_repository.get_last_success_payment(
+        session=session, subscription_id=subscription.id
+    )
+
+    if last_success_payment is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    last_transaction = sorted(subscription.transactions, key=lambda x: -x.created_at)[0]
-
-    if last_transaction.type != TransactionType.PAYMENT:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
-
-    transaction = await transaction_repository.create(
-        session=session,
-        data=TransactionCreateSchema(
-            payment_id=last_transaction.payment_id,
-            subscription_id=subscription.id,
-            type=TransactionType.REFUND,
-        ).model_dump(),
-    )
-
     refund = await yoo_kassa.create_refund(
-        payment_id=subscription.transactions[-1].payment_id,
+        payment_id=last_success_payment.payment_id,
         amount=Amount(
             value=Decimal(subscription.tariff.price) / Decimal(100),
             currency=subscription.tariff.currency,
@@ -145,18 +133,41 @@ async def refund(session: Session, user: User, yoo_kassa: YooKassa) -> Payment:
     )
 
     statuses: dict[RefundStatus, TransactionStatus] = {
-        RefundStatus.SUCCESS: TransactionStatus.SUCCESS,
+        RefundStatus.SUCCEEDED: TransactionStatus.SUCCESS,
         RefundStatus.CANCELED: TransactionStatus.CANCELED,
         RefundStatus.PENDING: TransactionStatus.PENDING,
     }
 
-    await transaction_repository.update(
+    await transaction_repository.create(
         session=session,
-        obj=transaction,
-        data={"status": statuses[refund.status]},
+        data=TransactionCreateSchema(
+            payment_id=refund.id,
+            subscription_id=subscription.id,
+            type=TransactionType.REFUND,
+            status=statuses.get(refund.status),
+        ).model_dump(),
     )
 
     return refund
+
+
+@router.get("/{user_id}/{movie_id}")
+async def movie_is_available(session: Session, user_id: UUID, movie_id: UUID) -> None:
+    """Проверяет, есть ли переданный фильм в активной подписке пользователя."""
+
+    subscription = await subscription_repository.get_user_active_subscription(
+        session=session, user_id=user_id
+    )
+
+    if subscription is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    is_available = await subscription_repository.movie_is_available(
+        session=session, subscription_id=subscription.id, movie_id=movie_id
+    )
+
+    if not is_available:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
 
 @router.get("/payment")

@@ -2,12 +2,13 @@ from datetime import datetime
 from uuid import UUID
 
 from api.v1.schemas.base import Base
-from models.types import TransactionStatus
+from models.types import TransactionStatus, TransactionType
 
 
 class TransactionBaseSchema(Base):
     subscription_id: UUID
     status: TransactionStatus
+    type: TransactionType
 
 
 class TransactionCreateSchema(TransactionBaseSchema):
