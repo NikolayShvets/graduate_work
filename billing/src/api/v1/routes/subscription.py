@@ -43,24 +43,24 @@ async def retrive_mine(session: Session, user: User) -> SubscriptionRetrieveSche
 async def subscribe(
     session: Session,
     yoo_kassa: YooKassa,
-    tarrif_id: UUID,
+    tariff_id: UUID,
     user: User,
 ) -> SubscriptionRetrieveSchema:
     """Оплатить подписку."""
 
-    if not await tariff_repository.exists(session=session, id=tarrif_id):
+    if not await tariff_repository.exists(session=session, id=tariff_id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
     if await subscription_repository.exists(session=session, user_id=user.id):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT)
 
-    tariff: Tariffs = await tariff_repository.get(session=session, id=tarrif_id)
+    tariff: Tariffs = await tariff_repository.get(session=session, id=tariff_id)
 
     subscription = await subscription_repository.create(
         session=session,
         data=SubscriptionCreateSchema(
             user_id=user.id,
-            tarrif_id=tarrif_id,
+            tariff_id=tariff_id,
         ).model_dump(),
         commit=False,
     )
@@ -153,7 +153,7 @@ async def refund(session: Session, user: User, yoo_kassa: YooKassa) -> Refund:
 
 @router.get("/{user_id}/{movie_id}")
 async def movie_is_available(session: Session, user_id: UUID, movie_id: UUID) -> None:
-    """Проверяет, есть ли переданный фильм в активной подписке пользователя."""
+    """Проверить, есть ли переданный фильм в подписке."""
 
     subscription = await subscription_repository.get_user_active_subscription(
         session=session, user_id=user_id

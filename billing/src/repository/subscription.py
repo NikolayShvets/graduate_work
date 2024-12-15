@@ -69,7 +69,7 @@ class SubscriptionRepository(SQLAlchemyRepository[Subscriptions]):
                 Plans2Services, Plans2Services.service_id == Services2Movies.service_id
             )
             .join(Tariffs, Tariffs.plan_id == Plans2Services.plan_id)
-            .join(Subscriptions, Subscriptions.tarrif_id == Tariffs.id)
+            .join(Subscriptions, Subscriptions.tariff_id == Tariffs.id)
             .where(Subscriptions.id == subscription_id)
             .distinct()
         )

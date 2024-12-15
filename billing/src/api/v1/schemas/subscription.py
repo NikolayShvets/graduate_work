@@ -5,7 +5,7 @@ from api.v1.schemas.base import Base
 
 
 class SubscriptionBaseSchema(Base):
-    tarrif_id: UUID
+    tariff_id: UUID
     user_id: UUID
 
 

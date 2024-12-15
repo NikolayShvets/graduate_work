@@ -5,7 +5,8 @@ from fastapi import APIRouter, HTTPException, Query, status
 
 from api.v1.deps.session import Session
 from api.v1.deps.user import UserData
-from api.v1.schemas.film import FilmResponseSchema
+from api.v1.schemas.film import FilmResponseSchema, FilmworkBaseSchema
+from clients.billing.client import billing_client
 from repository.film import film_repository
 from services.data_transfer import DataTransform
 
@@ -85,3 +86,17 @@ async def retrieve_all(
     films = [FilmResponseSchema(**film) for film in data]
 
     return films
+
+
+@router.get("/{film_id}/to_watch")
+async def retrieve_to_watch(
+    session: Session,
+    user: UserData,
+    film_id: UUID,
+) -> FilmworkBaseSchema:
+    """Получить фильм для просмотра."""
+
+    if not await billing_client.movie_is_available(user.id, film_id):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+
+    return await film_repository.get(session=session, id=film_id)

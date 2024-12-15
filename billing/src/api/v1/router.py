@@ -4,7 +4,7 @@ from api.v1.routes.subscription import router as subscription_router
 from api.v1.routes.tariff import router as tariff_router
 from api.v1.routes.yookassa import router as yookassa_router
 
-router = APIRouter(prefix="/api/billing/v1")
+router = APIRouter(prefix="/api/v1")
 
 router.include_router(
     router=subscription_router, prefix="/subscriptions", tags=["Подписки"]
