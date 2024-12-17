@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi import APIRouter, HTTPException, Response, status
 from fastapi_users.router.common import ErrorCode
 
@@ -15,6 +17,9 @@ from api.v1.deps.fastapi_users import (
 )
 from api.v1.deps.user_agent import UserAgent
 from api.v1.schemas.user import UserCreateSchema, UserRetrieveSchema
+from notifications.producer import kafka_producer
+from notifications.schemas.notification import Notification, EventType
+from notifications.schemas.user import User as UserScheme
 from users.schemas import BearerResponseSchema, RefreshResponseSchema
 
 router = APIRouter()
@@ -22,12 +27,12 @@ router = APIRouter()
 
 @router.post("/login")
 async def login(
-    user_agent: UserAgent,
-    user_manager: UserManager,
-    access_strategy: AccessStrategy,
-    refresh_strategy: RefreshStrategy,
-    session: Session,
-    credentials: OAuth2Credentials,
+        user_agent: UserAgent,
+        user_manager: UserManager,
+        access_strategy: AccessStrategy,
+        refresh_strategy: RefreshStrategy,
+        session: Session,
+        credentials: OAuth2Credentials,
 ) -> BearerResponseSchema:
     """Вход пользователя в аккаунт."""
     user = await user_manager.authenticate(credentials)
@@ -37,18 +42,29 @@ async def login(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=ErrorCode.LOGIN_BAD_CREDENTIALS,
         )
-    return await authentication_backend.login(
+    result = await authentication_backend.login(
         access_strategy, refresh_strategy, user, session, user_agent
     )
+    message = Notification(
+        id=uuid.uuid4(),
+        event_type=EventType.USER_LOGGED_IN,
+        user=UserScheme(
+            email=user.email,
+            name=user.name,
+            surname=user.surname,
+        )
+    )
+    await kafka_producer.send_message(topic=EventType.USER_LOGGED_IN, message=message)
+    return result
 
 
 @router.post("/logout")
 async def logout(
-    user_token: CurrentUserToken,
-    user_agent: UserAgent,
-    access_strategy: AccessStrategy,
-    refresh_strategy: RefreshStrategy,
-    session: Session,
+        user_token: CurrentUserToken,
+        user_agent: UserAgent,
+        access_strategy: AccessStrategy,
+        refresh_strategy: RefreshStrategy,
+        session: Session,
 ) -> Response:
     """Выход пользователя из аккаунта."""
     user, token = user_token
@@ -64,11 +80,11 @@ async def logout(
 
 @router.post("/refresh")
 async def refresh(
-    user: CurrentUserByRefreshToken,
-    user_agent: UserAgent,
-    access_strategy: AccessStrategy,
-    refresh_strategy: RefreshStrategy,
-    session: Session,
+        user: CurrentUserByRefreshToken,
+        user_agent: UserAgent,
+        access_strategy: AccessStrategy,
+        refresh_strategy: RefreshStrategy,
+        session: Session,
 ) -> RefreshResponseSchema:
     """Продление сессии пользователя."""
     return await authentication_backend.refresh(
