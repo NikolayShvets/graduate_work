@@ -5,7 +5,7 @@ from sqlalchemy.orm import joinedload
 
 from api.v1.deps.fastapi_users import CurrentUser
 from api.v1.deps.session import Session
-from models import User
+from models import User, UserRole
 from repository.user import user_repository
 
 
@@ -16,9 +16,11 @@ class RoleChecker:
     async def __call__(self, user: CurrentUser, session: Session) -> bool:
         # TODO: туповато, но переопределять методы UserManager из fastapi-users довольно муторно
         user = await user_repository.get(
-            session, id=user.id, options=[joinedload(User.roles)]
+            session,
+            id=user.id,
+            options=[joinedload(User.roles).joinedload(UserRole.role)],
         )
-        role_names = {role.name for role in user.roles}
+        role_names = {user_role.role.name for user_role in user.roles}
 
         if not role_names.intersection(self._allowed_roles) and not user.is_superuser:
             raise HTTPException(

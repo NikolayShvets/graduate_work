@@ -6,6 +6,7 @@ package-mode = false
 python = "^3.12"
 fastapi = "~0.115.5"
 sqlalchemy = "~2.0.36"
+alembic = "~1.14.0"
 uvicorn = "~0.32.0"
 redis = "~5.2.0"
 pydantic = "~2.9.2"
@@ -13,7 +14,7 @@ pydantic-settings = "~2.6.1"
 asyncpg = "~0.30.0"
 fastapi-users = {extras = ["oauth", "sqlalchemy"], version = "~14.0.0"}
 orjson = "~3.10.11"
-alembic = "~1.14.0"
+sqladmin = {extras = ["full"], version = "~0.20.1"}
 
 
 [build-system]

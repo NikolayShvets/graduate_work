@@ -10,32 +10,25 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     String,
-    Table,
     func,
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from models.base import Base, mapper_registry
+from models.base import Base
 from models.constance import (
     NAME_STR_LEN,
     REFRESH_TOKEN_STR_LEN,
     USER_AGENT_STR_LEN,
 )
 
-user_role = Table(
-    "userrole",
-    Base.metadata,
-    Column("user_id", ForeignKey("user.id"), primary_key=True),
-    Column("role_id", ForeignKey("role.id"), primary_key=True),
-)
 
+class UserRole(Base):
+    user_id = Column("user_id", ForeignKey("user.id"), primary_key=True)
+    role_id = Column("role_id", ForeignKey("role.id"), primary_key=True)
 
-class UserRole:
-    pass
-
-
-mapper_registry.map_imperatively(UserRole, user_role)
+    user = relationship("User", back_populates="roles")
+    role = relationship("Role", back_populates="users")
 
 
 class OAuthAccount(SQLAlchemyBaseOAuthAccountTableUUID, Base):
@@ -43,9 +36,8 @@ class OAuthAccount(SQLAlchemyBaseOAuthAccountTableUUID, Base):
 
 
 class User(SQLAlchemyBaseUserTableUUID, Base):
-    roles: Mapped[list["Role"]] = relationship(
-        "Role", secondary=user_role, back_populates="users"
-    )
+    roles = relationship("UserRole", back_populates="user")
+
     sessions: Mapped[list["Session"]] = relationship("Session", back_populates="user")
 
     oauth_accounts: Mapped[list[OAuthAccount]] = relationship(
@@ -59,7 +51,7 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
 class Role(Base):
     name: Mapped[UUID] = mapped_column(String(NAME_STR_LEN), unique=True)
 
-    users = relationship("User", secondary=user_role, back_populates="roles")
+    users = relationship("UserRole", back_populates="role")
 
     def __str__(self) -> str:
         return f"Role ({self.id}) {self.name}"

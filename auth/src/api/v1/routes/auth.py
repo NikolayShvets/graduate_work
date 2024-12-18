@@ -30,7 +30,7 @@ async def login(
     credentials: OAuth2Credentials,
 ) -> BearerResponseSchema:
     """Вход пользователя в аккаунт."""
-    user = await user_manager.authenticate(credentials)
+    user = await user_manager.authenticate(credentials=credentials)
 
     if user is None or not user.is_active:
         raise HTTPException(
