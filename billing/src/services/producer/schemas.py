@@ -1,24 +1,21 @@
 from enum import StrEnum, auto
 from uuid import UUID
 
-from schemas.base import Base
-from schemas.user import User
+from pydantic import BaseModel, EmailStr
 
 
 class EventType(StrEnum):
-    USER_REGISTERED = auto()
-    USER_LOGGED_IN = auto()
     SUBSCRIPTION_PAID = auto()
     SUBSCRIPTION_CANCELED = auto()
     SUBSCRIPTION_REFUNDED = auto()
 
 
-class DeliveryMethod(StrEnum):
-    EMAIL = auto()
-    SMS = auto()
+class User(BaseModel):
+    email: EmailStr
+    name: str
 
 
-class Notification(Base):
+class Notification(BaseModel):
     id: UUID
     event_type: EventType
     user: User

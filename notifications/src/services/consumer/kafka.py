@@ -28,3 +28,12 @@ class KafkaConsumer:
 
     async def _handle_user_logged_in(self, value: bytes) -> Notification:
         return await self._create_notification(EventType.USER_LOGGED_IN, value)
+    
+    async def _handle_subscription_paid(self, value: bytes) -> Notification:
+        return await self._create_notification(EventType.SUBSCRIPTION_PAID, value)
+    
+    async def _handle_subscription_canceled(self, value: bytes) -> Notification:
+        return await self._create_notification(EventType.SUBSCRIPTION_CANCELED, value)
+    
+    async def _handle_subscription_refunded(self, value: bytes) -> Notification:
+        return await self._create_notification(EventType.SUBSCRIPTION_REFUNDED, value)

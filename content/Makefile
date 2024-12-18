@@ -24,4 +24,4 @@ migrate:
 filldb:
 	PYTHONPATH=src python src/commands/fill_database.py
 
-.DEFAULT_GOAL := build
+.DEFAULT_GOAL := up

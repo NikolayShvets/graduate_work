@@ -1,7 +1,7 @@
 services:
   billing:
     container_name: movies-notifications
-    image: ghcr.io/nikolayshvets/movies-notifications:1.1
+    build: .
     env_file:
       - .env
     volumes:

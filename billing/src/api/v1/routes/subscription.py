@@ -1,9 +1,10 @@
 from decimal import Decimal
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from fastapi import APIRouter, HTTPException, status
 from sqlalchemy.orm import joinedload
 
+from api.v1.deps.producer import Producer
 from api.v1.deps.session import Session
 from api.v1.deps.user import User
 from api.v1.deps.yookassa import YooKassa
@@ -17,6 +18,8 @@ from models.types import TransactionStatus, TransactionType
 from repository.subscription import subscription_repository
 from repository.tariff import tariff_repository
 from repository.transaction import transaction_repository
+from services.producer.schemas import EventType, Notification
+from services.producer.schemas import User as ProducerUser
 from services.yookassa.dto.amount import Amount
 from services.yookassa.dto.confirmation import Confirmation
 from services.yookassa.dto.payment import Payment
@@ -92,13 +95,26 @@ async def subscribe(
 
 
 @router.put("")
-async def cancel(session: Session, user: User) -> SubscriptionRetrieveSchema:
+async def cancel(
+    session: Session, producer: Producer, user: User
+) -> SubscriptionRetrieveSchema:
     """Отменить подписку."""
 
     subscription = await subscription_repository.get(session=session, user_id=user.id)
 
     if subscription is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    await producer.produce(
+        Notification(
+            id=uuid4(),
+            event_type=EventType.SUBSCRIPTION_CANCELED,
+            user=ProducerUser(
+                email=user.email,
+                name=user.email.split("@")[0],
+            ),
+        )
+    )
 
     return await subscription_repository.update(
         session=session,
@@ -108,7 +124,7 @@ async def cancel(session: Session, user: User) -> SubscriptionRetrieveSchema:
 
 
 @router.post("/refund")
-async def refund(session: Session, user: User, yoo_kassa: YooKassa) -> Refund:
+async def refund(session: Session, producer: Producer, user: User, yoo_kassa: YooKassa) -> Refund:
     """Вернуть деньги за текущий период подписки."""
 
     subscription = await subscription_repository.get(
@@ -146,6 +162,17 @@ async def refund(session: Session, user: User, yoo_kassa: YooKassa) -> Refund:
             type=TransactionType.REFUND,
             status=statuses.get(refund.status),
         ).model_dump(),
+    )
+
+    await producer.produce(
+        Notification(
+            id=uuid4(),
+            event_type=EventType.SUBSCRIPTION_REFUNDED,
+            user=ProducerUser(
+                email=user.email,
+                name=user.email.split("@")[0],
+            ),
+        )
     )
 
     return refund

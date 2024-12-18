@@ -1,8 +1,8 @@
 """initial_migration
 
-Revision ID: b34a0189d646
+Revision ID: 26f9a2a81e1d
 Revises: 
-Create Date: 2024-11-29 00:29:06.397526
+Create Date: 2024-12-18 23:22:41.912135
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = 'b34a0189d646'
+revision: str = '26f9a2a81e1d'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -30,7 +30,7 @@ def upgrade() -> None:
     sa.UniqueConstraint('method')
     )
     op.create_table('eventtypes',
-    sa.Column('type', postgresql.ENUM('USER_REGISTERED', 'USER_LOGGED_IN', name='event_type'), nullable=False),
+    sa.Column('type', postgresql.ENUM('USER_REGISTERED', 'USER_LOGGED_IN', 'SUBSCRIPTION_PAID', 'SUBSCRIPTION_CANCELED', 'SUBSCRIPTION_REFUNDED', name='event_type'), nullable=False),
     sa.Column('description', sa.String(length=255), nullable=True),
     sa.Column('id', sa.Uuid(), server_default=sa.text('gen_random_uuid()'), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),

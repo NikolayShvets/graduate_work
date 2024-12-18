@@ -1,13 +1,18 @@
 from datetime import timedelta
+from uuid import uuid4
 
 from fastapi import APIRouter
 from sqlalchemy.orm import joinedload
 
+from api.v1.deps.producer import Producer
 from api.v1.deps.session import Session
+from clients.auth.client import auth_client
 from models import Subscriptions, Transactions
 from models.types import TransactionStatus
 from repository.subscription import subscription_repository
 from repository.transaction import transaction_repository
+from services.producer.schemas import EventType as ProducerEventType
+from services.producer.schemas import Notification, User
 from services.yookassa.dto.callback import Callback
 from services.yookassa.dto.types import EventType
 
@@ -15,7 +20,7 @@ router = APIRouter()
 
 
 @router.post("/yookassa/callback")
-async def callback(session: Session, callback: Callback) -> None:
+async def callback(session: Session, producer: Producer, callback: Callback) -> None:
     transcation = await transaction_repository.get(
         session=session,
         payment_id=callback.object.id,
@@ -43,6 +48,19 @@ async def callback(session: Session, callback: Callback) -> None:
                 ).replace(tzinfo=None),
             },
             commit=True,
+        )
+
+        user = await auth_client.get_user(user_id=transcation.subscription.user_id)
+
+        await producer.produce(
+            Notification(
+                id=uuid4(),
+                event_type=ProducerEventType.SUBSCRIPTION_PAID,
+                user=User(
+                    email=user.email,
+                    name=user.email.split("@")[0],
+                ),
+            )
         )
 
     if callback.event == EventType.PAYMENT_CANCELED:
